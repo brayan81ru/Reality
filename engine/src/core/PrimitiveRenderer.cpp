@@ -268,29 +268,23 @@ namespace Reality {
         }
     }
 
-    void PrimitiveRenderer::Render()
+    void PrimitiveRenderer::Render(const Camera* camera)
     {
         // Initial transformations
-        float4x4 CubeModelTransform = float4x4::Translation(0.0f,0.0f,0.0f) * float4x4::RotationY(5.0f) * float4x4::RotationX(-PI_F * 0.1f);
+        const float4x4 CubeModelTransform = float4x4::Translation(0.f,0.f,4.f)*float4x4::Scale(1.f,1.f,1.f)*float4x4::RotationX(0.f)*float4x4::RotationY(0.f)*float4x4::RotationZ(0.f);
 
-        // Camera is at (0, 0, -5) looking along the Z axis
-        constexpr float4x4 View = float4x4::Translation(0.f, 0.0f, 5.0f);
-
-        // Get pre transform matrix that rotates the scene according the surface orientation
-        float4x4 SrfPreTransform = GetSurfacePretransformMatrix(float3{0, 0, 1});
-
-        // Get projection matrix adjusted to the current screen orientation
-        const float4x4 Proj = GetAdjustedProjectionMatrix(PI_F / 4.0f, 0.1f, 100.f);
+        // Apply the camera transformations.
+        const auto& scDesc = m_pRenderer->GetSwapChain()->GetDesc();
+        const float4x4 viewProj = camera->GetAdjustedViewProjectionMatrix(scDesc);
 
         // Compute world-view-projection matrix
-        m_WorldViewProjMatrix = CubeModelTransform * View * SrfPreTransform * Proj;
+        m_WorldViewProjMatrix = CubeModelTransform*viewProj;
 
         // Bind vertex and index buffers
         constexpr Uint64 offset   = 0;
         IBuffer* pBuffs[] = {m_CubeVertexBuffer};
         m_pRenderer->GetContext()->SetVertexBuffers(0, 1, pBuffs, &offset, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
         m_pRenderer->GetContext()->SetIndexBuffer(m_CubeIndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-
         {
             // Map the buffer and write current world-view-projection matrix
             MapHelper<float4x4> CBConstants(m_pRenderer->GetContext(), m_VSConstants, MAP_WRITE, MAP_FLAG_DISCARD);

@@ -1,6 +1,7 @@
 ﻿# Real library (not INTERFACE since you have .cpp files)
 
 add_library(Engine STATIC
+        src/core/Camera.cpp
         src/core/Config.h
         src/Reality.h
         src/core/Log.cpp

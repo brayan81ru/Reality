@@ -68,10 +68,18 @@ int main() {
     // Create a primitive renderer.
     const auto primitiveRenderer = new PrimitiveRenderer(Application.GetRenderer());
 
+    // Initialize camera with default settings
+    const auto camera = new Camera();
+
+    // Create a camera.
+    camera->SetPosition(float3(0, 1, -5));
+    camera->LookAt(float3(0, 0, 0));
+    camera->SetPerspective(60.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+
     while (Application.IsRunning()) {
         Application.Update();
 
-        primitiveRenderer->Render();
+        primitiveRenderer->Render(camera);
 
         Application.Frame();
     }

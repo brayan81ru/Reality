@@ -16,6 +16,7 @@
 #include <core/Vector2.h>
 #include <core/RealityApplication.h>
 #include <core/PrimitiveRenderer.h>
+#include <core/Camera.h>
 
 using namespace Diligent;
 
@@ -52,3 +53,5 @@ using Reality::Shader;
 using Reality::RealityApplication;
 
 using Reality::PrimitiveRenderer;
+
+using Reality::Camera;

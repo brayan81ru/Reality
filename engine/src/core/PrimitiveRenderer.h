@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "core/Camera.h"
 #include "rendering/Renderer.h"
 #include "core/Shader.h"
 #include "BasicMath.hpp"
@@ -21,7 +22,7 @@ namespace Reality {
 
         float4x4 GetSurfacePretransformMatrix(const float3 &f3CameraViewAxis) const;
 
-        void Render();
+        void Render(const Camera* camera);
 
     private:
         RefCntAutoPtr<IPipelineState>         m_pPSO;
