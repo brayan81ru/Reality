@@ -1,0 +1,33 @@
+#include "common.fxh"
+
+cbuffer cbConstants
+{
+    Constants g_Constants;
+}
+
+struct PSOutput
+{
+    float4 Color  : SV_TARGET0;
+    float4 Reveal : SV_TARGET1;
+};
+
+void main(in PSInput   PSIn,
+          out PSOutput PSOut)
+{
+    float4 Color;
+    Color.rgb = ComputeLighting(PSIn.Color.rgb, PSIn.Normal, g_Constants.LightDir.xyz);
+    Color.a = lerp(g_Constants.MinOpacity, g_Constants.MaxOpacity, PSIn.Color.a);
+    Color.rgb *= Color.a;
+
+    float DepthWeight = 1.0 - PSIn.Pos.z * 0.95;
+    float AlphaWeight = max(min(1.0, max(max(Color.r, Color.g), Color.b) * Color.a), Color.a);
+
+    float Weight = AlphaWeight * DepthWeight;
+    Weight = clamp(Weight * Weight * Weight * 1e+3, 1e-2, 3e+2);
+    
+    // Blend:  Src * 1 + Dst * 1
+    PSOut.Color = Color * Weight;
+
+    // Blend:  Src * 0 + Dst * (1 - SrcA)
+    PSOut.Reveal = float4(0.0, 0.0, 0.0, Color.a);
+}
