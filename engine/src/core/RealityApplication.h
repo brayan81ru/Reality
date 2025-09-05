@@ -7,7 +7,6 @@
 namespace Reality {
 
     class RealityApplication {
-    private:
         Window* m_window;
         Renderer* m_renderer;
     public:

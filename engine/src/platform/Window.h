@@ -4,6 +4,8 @@
 #include <string>
 #include <NativeWindow.h>
 
+using namespace Diligent;
+
 namespace Reality {
     class Renderer;
 
@@ -11,7 +13,7 @@ namespace Reality {
 
     public:
 
-        static Diligent::NativeWindow SDLWindowToNativeWindow(SDL_Window* window);
+        static NativeWindow SDLWindowToNativeWindow(SDL_Window* window);
 
         Window(const std::string& title, int width, int height);
 
@@ -35,8 +37,8 @@ namespace Reality {
         void SetRenderer(Renderer* renderer);
 
     private:
-        Renderer* m_Renderer;
+        Renderer* m_Renderer{};
         bool m_quit = false;
-        SDL_Event m_Event;
+        SDL_Event m_Event{};
     };
 }

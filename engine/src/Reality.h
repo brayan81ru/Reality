@@ -17,7 +17,7 @@
 #include <core/RealityApplication.h>
 #include <core/PrimitiveRenderer.h>
 
-#include "core/PrimitiveRenderer.h"
+using namespace Diligent;
 
 using Reality::Log;
 

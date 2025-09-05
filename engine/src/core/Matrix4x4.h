@@ -45,7 +45,7 @@ namespace Reality {
             return Translation(translation) * Rotation(rotation) * Scale(scale);
         }
 
-        static Matrix4x4 Perspective(float fovDegrees, float aspectRatio, float nearClip, float farClip) {
+        static Matrix4x4 Perspective(const float fovDegrees, const float aspectRatio, const float nearClip, const float farClip) {
             Matrix4x4 result;
             const float fovRad = fovDegrees * (3.14159265358979323846f / 180.0f);
             const float tanHalfFov = tanf(fovRad / 2.0f);
@@ -119,7 +119,7 @@ namespace Reality {
         }
 
         // ================ CONVERSIONS ================
-        explicit operator Diligent::float4x4() const {
+        operator Diligent::float4x4() const {
             Diligent::float4x4 result;
             memcpy(&result._11, m, 16 * sizeof(float));
             return result;
@@ -128,8 +128,8 @@ namespace Reality {
         // ================ ACCESSORS ================
         float* Data() { return m; }
         [[nodiscard]] const float* Data() const { return m; }
-        float& operator()(int row, int col) { return m[col*4+row]; }
-        const float& operator()(int row, int col) const { return m[col*4+row]; }
+        float& operator()(const int row, const int col) { return m[col*4+row]; }
+        const float& operator()(const int row, const int col) const { return m[col*4+row]; }
 
     private:
         void SetIdentity() {

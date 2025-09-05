@@ -6,11 +6,11 @@
 #include "rendering/Renderer.h"
 
 namespace Reality {
-    Diligent::NativeWindow Window::SDLWindowToNativeWindow(SDL_Window *window) {
+    NativeWindow Window::SDLWindowToNativeWindow(SDL_Window *window) {
         SDL_SysWMinfo wmInfo;
         SDL_VERSION(&wmInfo.version);
         SDL_GetWindowWMInfo(window, &wmInfo);
-        Diligent::NativeWindow nativeWindow;
+        NativeWindow nativeWindow;
 
         #ifdef _WIN32
         nativeWindow.hWnd = wmInfo.info.win.window;
@@ -24,7 +24,7 @@ namespace Reality {
         return nativeWindow;
     }
 
-    Window::Window(const std::string& title, int width, int height) {
+    Window::Window(const std::string& title, const int width, const int height) {
 
         SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 
@@ -109,6 +109,7 @@ void Window::Run() {
                             // Window lost focus
                             std::cout << "Windows::LostFocus" << std::endl;
                             break;
+                        default: break;
                     }
                     break;
 
@@ -120,6 +121,7 @@ void Window::Run() {
                 case SDL_MOUSEBUTTONDOWN:
                     // Handle mouse button press
                     break;
+                default: break;
             }
         }
     }

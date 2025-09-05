@@ -33,20 +33,20 @@ namespace Reality {
 
     bool Shader::LoadFromMemory(const std::string& vertexSrc, const std::string& pixelSrc) {
         // Compile shaders
-        Diligent::RefCntAutoPtr<Diligent::IShader> pVS;
-        if (!CompileShader(vertexSrc, Diligent::SHADER_TYPE_VERTEX, &pVS)) {
+        RefCntAutoPtr<IShader> pVS;
+        if (!CompileShader(vertexSrc, SHADER_TYPE_VERTEX, &pVS)) {
             return false;
         }
 
-        Diligent::RefCntAutoPtr<Diligent::IShader> pPS;
-        if (!CompileShader(pixelSrc, Diligent::SHADER_TYPE_PIXEL, &pPS)) {
+        RefCntAutoPtr<IShader> pPS;
+        if (!CompileShader(pixelSrc, SHADER_TYPE_PIXEL, &pPS)) {
             return false;
         }
 
         // Create pipeline state using GraphicsPipelineStateCreateInfo
-        Diligent::GraphicsPipelineStateCreateInfo PSOCreateInfo;
+        GraphicsPipelineStateCreateInfo PSOCreateInfo;
         PSOCreateInfo.PSODesc.Name = "Simple triangle PSO";
-        PSOCreateInfo.PSODesc.PipelineType = Diligent::PIPELINE_TYPE_GRAPHICS;
+        PSOCreateInfo.PSODesc.PipelineType = PIPELINE_TYPE_GRAPHICS;
 
         // Set shaders
         PSOCreateInfo.pVS = pVS;
@@ -58,9 +58,9 @@ namespace Reality {
         PSOCreateInfo.GraphicsPipeline.DSVFormat = m_pSwapChain->GetDesc().DepthBufferFormat;
 
         // Default states
-        PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = Diligent::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
         PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = true;
-        PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = Diligent::CULL_MODE_BACK;
+        PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = CULL_MODE_BACK;
 
         // Create PSO
         m_pDevice->CreateGraphicsPipelineState(PSOCreateInfo, &m_PSO);
@@ -68,7 +68,7 @@ namespace Reality {
         if (!m_PSO) return false;
 
         // Bind uniform buffer
-        if (auto* constants = m_PSO->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, "Constants")) {
+        if (auto* constants = m_PSO->GetStaticVariableByName(SHADER_TYPE_VERTEX, "Constants")) {
             constants->Set(m_VSConstants);
         }
 
@@ -80,18 +80,18 @@ namespace Reality {
 
     void Shader::Bind() const {
         m_pContext->SetPipelineState(m_PSO);
-        m_pContext->CommitShaderResources(m_SRB, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        m_pContext->CommitShaderResources(m_SRB, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
     }
 
     void Shader::SetUniform(const std::string& name, const Matrix4x4& value) const {
         if (name == "Constants") {
-            Diligent::MapHelper<Diligent::float4x4> CBConstants(
+            MapHelper<float4x4> CBConstants(
                 m_pContext,
                 m_VSConstants,
-                Diligent::MAP_WRITE,
-                Diligent::MAP_FLAG_DISCARD
+                MAP_WRITE,
+                MAP_FLAG_DISCARD
             );
-            *CBConstants = *reinterpret_cast<const Diligent::float4x4*>(&value);
+            *CBConstants = *reinterpret_cast<const float4x4*>(&value);
         }
     }
 
@@ -99,19 +99,19 @@ namespace Reality {
         if (!m_SRB) return;
 
         // Get non-const texture view
-        Diligent::ITextureView* pTextureView = const_cast<Texture&>(texture).GetDiligentTextureView();
+        ITextureView* pTextureView = const_cast<Texture&>(texture).GetDiligentTextureView();
         if (!pTextureView) return;
 
-        if (auto* pVar = m_SRB->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, name.c_str())) {
+        if (auto* pVar = m_SRB->GetVariableByName(SHADER_TYPE_PIXEL, name.c_str())) {
             pVar->Set(pTextureView);
         }
     }
 
-    bool Shader::CompileShader(const std::string& source, Diligent::SHADER_TYPE type, Diligent::IShader** ppShader) const {
-        Diligent::ShaderCreateInfo shaderCI;
-        shaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+    bool Shader::CompileShader(const std::string& source, SHADER_TYPE type, IShader** ppShader) const {
+        ShaderCreateInfo shaderCI;
+        shaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL;
         shaderCI.Desc.ShaderType = type;
-        shaderCI.Desc.Name = type == Diligent::SHADER_TYPE_VERTEX ? "Vertex shader" : "Pixel shader";
+        shaderCI.Desc.Name = type == SHADER_TYPE_VERTEX ? "Vertex shader" : "Pixel shader";
         shaderCI.Source = source.c_str();
         shaderCI.EntryPoint = "main";
         m_pDevice->CreateShader(shaderCI, ppShader);

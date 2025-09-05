@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include <NativeWindow.h>
 #include <RefCntAutoPtr.hpp>
 #include <RenderDevice.h>

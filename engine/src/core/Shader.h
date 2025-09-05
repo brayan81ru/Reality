@@ -7,6 +7,8 @@
 #include <string>
 #include "rendering/Renderer.h"
 
+using namespace Diligent;
+
 namespace Reality {
 
     class Shader {
@@ -23,9 +25,9 @@ namespace Reality {
         void SetUniform(const std::string& name, const Matrix4x4& value) const;
         void SetTexture(const std::string& name, const Texture& texture) const;
 
-        [[nodiscard]] Diligent::IPipelineState* GetPipelineState() const { return m_PSO.RawPtr(); }
+        [[nodiscard]] IPipelineState* GetPipelineState() const { return m_PSO.RawPtr(); }
 
-        [[nodiscard]] Diligent::IShaderResourceBinding* GetResourceBinding() const { return m_SRB.RawPtr(); }
+        [[nodiscard]] IShaderResourceBinding* GetResourceBinding() const { return m_SRB.RawPtr(); }
 
         void AddIncludeDirectory(const std::string& path);
 
@@ -34,21 +36,21 @@ namespace Reality {
 
         static std::string ReadShaderFileAndRemoveBOM(const std::string &filePath);
 
-        bool CompileShader(const std::string& source, Diligent::SHADER_TYPE type, Diligent::IShader** ppShader) const;
+        bool CompileShader(const std::string& source, SHADER_TYPE type, IShader** ppShader) const;
 
-        Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_PSO;
+        RefCntAutoPtr<IPipelineState> m_PSO;
 
-        Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> m_SRB;
+        RefCntAutoPtr<IShaderResourceBinding> m_SRB;
 
-        Diligent::RefCntAutoPtr<Diligent::IBuffer> m_VSConstants;
+        RefCntAutoPtr<IBuffer> m_VSConstants;
 
-        Diligent::RefCntAutoPtr<Diligent::IRenderDevice> m_pDevice;
+        RefCntAutoPtr<IRenderDevice> m_pDevice;
 
-        Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_pContext;
+        RefCntAutoPtr<IDeviceContext> m_pContext;
 
         std::vector<std::string> m_IncludeDirs;
 
-        Diligent::RefCntAutoPtr<Diligent::ISwapChain> m_pSwapChain;
+        RefCntAutoPtr<ISwapChain> m_pSwapChain;
 
         static std::string ProcessIncludes(const std::string& source, const std::string& parentPath);
 
