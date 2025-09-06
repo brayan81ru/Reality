@@ -21,8 +21,8 @@ namespace Reality {
 
     void TransformComponent::Update(const float deltaTime) {
         BaseComponent::Update(deltaTime);
-        const auto name = GetGameObject()->GetName();
-        RLOG_INFO("[%s] - Transform Update",name.c_str());
+        //const auto name = GetGameObject()->GetName();
+        //RLOG_INFO("[%s] - Transform Update",name.c_str());
         if (m_transformDirty) {
             UpdateTransform();
         }
