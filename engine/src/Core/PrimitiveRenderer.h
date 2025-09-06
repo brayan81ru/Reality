@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "core/Camera.h"
-#include "rendering/Renderer.h"
-#include "core/Shader.h"
+#include "Core/Camera.h"
+#include "Rendering/Renderer.h"
+#include "Core/Shader.h"
 #include "BasicMath.hpp"
 
 using namespace Diligent;

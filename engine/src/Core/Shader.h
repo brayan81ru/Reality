@@ -3,7 +3,7 @@
 #include "DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
 #include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
 #include <string>
-#include "rendering/Renderer.h"
+#include "Rendering/Renderer.h"
 
 using namespace Diligent;
 

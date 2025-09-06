@@ -1,5 +1,5 @@
 ﻿#include "Camera.h"
-#include "rendering/Renderer.h"
+#include "Rendering/Renderer.h"
 #include <cmath>
 
 namespace Reality {

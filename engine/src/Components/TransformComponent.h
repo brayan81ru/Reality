@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "BaseComponent.h"
-#include "MathF.h"
+#include "../Core/BaseComponent.h"
+#include "../Core/MathF.h"
 
 namespace Reality {
     class BaseGameObject;

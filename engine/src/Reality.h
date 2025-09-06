@@ -1,22 +1,22 @@
 ﻿#pragma once
 
-#include <core/Config.h>
-#include <core/Log.h>
-#include <platform/Window.h>
-#include <rendering/ImguiBackend.h>
-#include <rendering/DisplayManager.h>
-#include <rendering/Renderer.h>
-#include <core/Timer.h>
-#include <core/Shader.h>
-#include <core/RealityApplication.h>
-#include <core/PrimitiveRenderer.h>
-#include <core/Camera.h>
-#include <core/MathF.h>
-#include <core/BaseComponent.h>
-#include <core/BaseGameObject.h>
-#include <core/TransformComponent.h>
+#include <Core/Config.h>
+#include <Core/Log.h>
+#include <Platform/Window.h>
+#include <Rendering/ImguiBackend.h>
+#include <Rendering/DisplayManager.h>
+#include <Rendering/Renderer.h>
+#include <Core/Timer.h>
+#include <Core/Shader.h>
+#include <Core/RealityApplication.h>
+#include <Core/PrimitiveRenderer.h>
+#include <Core/Camera.h>
+#include <Core/MathF.h>
+#include <Core/BaseComponent.h>
+#include <Core/BaseGameObject.h>
+#include <Components/TransformComponent.h>
 
-#include "core/Scene.h"
+#include "Core/Scene.h"
 
 using namespace Diligent;
 

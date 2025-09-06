@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <string>
-#include "core/Timer.h"
-#include "platform/Window.h"
-#include "rendering/Renderer.h"
+#include "Core/Timer.h"
+#include "Platform/Window.h"
+#include "Rendering/Renderer.h"
 
 namespace Reality {
 

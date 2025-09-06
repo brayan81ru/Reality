@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "ImGuiUtils.hpp"
 #include "SDL_events.h"
-#include "core/Log.h"
+#include "Core/Log.h"
 
 namespace Reality {
 

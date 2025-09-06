@@ -7,7 +7,7 @@
 #include <RefCntAutoPtr.hpp>
 #include <imgui.h>
 
-#include "core/Log.h"
+#include "Core/Log.h"
 
 namespace Reality {
 

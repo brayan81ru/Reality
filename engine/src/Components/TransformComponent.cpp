@@ -1,7 +1,7 @@
 ﻿#include "TransformComponent.h"
-#include "BaseGameObject.h"
+#include "Core/BaseGameObject.h"
 #include <algorithm>
-#include "Log.h"
+#include "Core/Log.h"
 
 namespace Reality {
     TransformComponent::TransformComponent()

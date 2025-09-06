@@ -2,8 +2,8 @@
 #include <NativeWindow.h>
 #include <RefCntAutoPtr.hpp>
 #include <RenderDevice.h>
-#include <rendering/ImguiBackend.h>
-#include <rendering/DisplayManager.h>
+#include <Rendering/ImguiBackend.h>
+#include <Rendering/DisplayManager.h>
 #include "BasicMath.hpp"
 
 namespace Reality {

@@ -2,7 +2,7 @@
 #include <vector>
 #include <SDL.h>
 #include <string>
-#include <platform/Window.h>
+#include <Platform/Window.h>
 
 namespace Reality {
 

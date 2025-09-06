@@ -1,5 +1,5 @@
 ﻿#include "BaseGameObject.h"
-#include "TransformComponent.h"
+#include "../Components/TransformComponent.h"
 #include <algorithm>
 
 #include "DiligentTools/ThirdParty/args/args.hxx"
