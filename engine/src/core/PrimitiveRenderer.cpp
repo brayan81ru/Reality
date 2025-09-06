@@ -289,7 +289,10 @@ namespace Reality {
         }
 
         // Initial transformations
-        const float4x4 CubeModelTransform = float4x4::Translation(0.f,0.f,4.f)*float4x4::Scale(1.f,1.f,1.f)*float4x4::RotationX(0.f)*float4x4::RotationY(0.f)*float4x4::RotationZ(0.f);
+        //const float4x4 CubeModelTransform = float4x4::Translation(0.f,0.f,-5.f)*float4x4::Scale(1.f,1.f,1.f)*float4x4::RotationX(0.f)*float4x4::RotationY(0.f)*float4x4::RotationZ(0.f);
+        //-const MathF::Matrix4x4 TestMatrix = MathF::Matrix4x4::Translation(MathF::Vector3f(0.f,0.f,-15.f)) * MathF::Matrix4x4::Scale(MathF::Vector3f(1.f,1.f,1.f));
+        const auto CubeModelTransform = static_cast<Diligent::float4x4>(MathF::Matrix4x4::Translation(MathF::Vector3f(0.f,0.f,-15.f)) * MathF::Matrix4x4::Scale(MathF::Vector3f(0.5f,1.f,1.f)));
+
 
         // Compute world-view-projection matrix
         m_WorldViewProjMatrix = CubeModelTransform*Renderer::GetInstance().GetWorldProjectionMatrix();

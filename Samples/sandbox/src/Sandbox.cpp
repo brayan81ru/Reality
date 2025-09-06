@@ -1,6 +1,6 @@
 ﻿#include <Reality.h>
-
 #include "imgui.h"
+#include "TestGameobject.h"
 
 int main() {
     // Log class and macros.
@@ -75,12 +75,14 @@ int main() {
     const auto camera = new Camera();
 
     // Create a camera.
-    camera->SetPosition(float3(0, 1, -5));
-    camera->LookAt(float3(0, 0, 0));
+    camera->SetPosition(Vector3f(0, 0, 5));
+    camera->LookAt(Vector3f(0, 0, -15.f));
     camera->SetPerspective(60.0f, 0.1f, 100.0f);
 
     while (Application->IsRunning()) {
         Application->Update();
+
+        camera->MoveForward(2.0f*Timer::GetDeltaTime());
 
         camera->Render();
 

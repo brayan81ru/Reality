@@ -11,6 +11,10 @@
 #include <core/RealityApplication.h>
 #include <core/PrimitiveRenderer.h>
 #include <core/Camera.h>
+#include <core/MathF.h>
+#include <core/BaseComponent.h>
+#include <core/BaseGameObject.h>
+#include <core/TransformComponent.h>
 
 using namespace Diligent;
 
@@ -35,3 +39,13 @@ using Reality::RealityApplication;
 using Reality::PrimitiveRenderer;
 
 using Reality::Camera;
+
+using Reality::BaseGameObject;
+
+using Reality::BaseComponent;
+
+using Reality::TransformComponent;
+
+using namespace Reality::MathF;
+
+
