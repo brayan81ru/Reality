@@ -5,6 +5,7 @@
 
 namespace Reality {
     Scene::Scene() = default;
+
     Scene::~Scene() = default;
 
     void Scene::Initialize() {

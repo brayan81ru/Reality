@@ -26,6 +26,11 @@ namespace Reality {
                     }
                 }
             }
+
+            // Start children recursively
+            for (BaseGameObject* child : m_children) {
+                child->Start();
+            }
         }
     }
 
@@ -41,7 +46,7 @@ namespace Reality {
             }
         }
 
-        // Update children
+        // Update children recursively
         UpdateChildren(deltaTime);
     }
 
@@ -60,7 +65,7 @@ namespace Reality {
             m_parent->RemoveChild(this);
         }
 
-        // Destroy children
+        // Destroy children recursively
         for (BaseGameObject* child : m_children) {
             child->OnDestroy();
             delete child;
@@ -102,7 +107,6 @@ namespace Reality {
 
     std::vector<BaseComponent*> BaseGameObject::GetComponents() {
         std::vector<BaseComponent*> components;
-
         // Iterate through all component types in the map
         for (auto& pair : m_components) {
             // pair is a std::pair<std::type_index, std::vector<BaseComponent*>>
@@ -111,7 +115,6 @@ namespace Reality {
                 components.push_back(component);
             }
         }
-
         return components;
     }
 
@@ -135,6 +138,10 @@ namespace Reality {
     void BaseGameObject::AddChild(BaseGameObject* child) {
         if (child && std::find(m_children.begin(), m_children.end(), child) == m_children.end()) {
             m_children.push_back(child);
+            // If this game object has started, start the child
+            if (m_started) {
+                child->Start();
+            }
         }
     }
 
@@ -151,7 +158,7 @@ namespace Reality {
         }
     }
 
-    // Template implementations
+    // Template implementations remain the same...
     template<typename T>
     T* BaseGameObject::AddComponent() {
         static_assert(std::is_base_of_v<BaseComponent, T>,
@@ -267,7 +274,6 @@ namespace Reality {
     }
 
     // Explicit template instantiations for common types
-    // This helps with compilation and reduces template bloat
     template TransformComponent* BaseGameObject::AddComponent<TransformComponent>();
     template TransformComponent* BaseGameObject::GetComponent<TransformComponent>() const;
     template std::vector<TransformComponent*> BaseGameObject::GetComponents<TransformComponent>() const;
