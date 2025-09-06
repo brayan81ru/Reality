@@ -1,6 +1,5 @@
 ﻿#include "Shader.h"
 #include <filesystem>
-#include "Core/TextureManager.h"
 #include "DiligentCore/Graphics/GraphicsEngine/interface/RenderDevice.h"
 #include "DiligentCore/Graphics/GraphicsTools/interface/MapHelper.hpp"
 #include <fstream>
@@ -81,30 +80,6 @@ namespace Reality {
     void Shader::Bind() const {
         m_pContext->SetPipelineState(m_PSO);
         m_pContext->CommitShaderResources(m_SRB, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-    }
-
-    void Shader::SetUniform(const std::string& name, const Matrix4x4& value) const {
-        if (name == "Constants") {
-            MapHelper<float4x4> CBConstants(
-                m_pContext,
-                m_VSConstants,
-                MAP_WRITE,
-                MAP_FLAG_DISCARD
-            );
-            *CBConstants = *reinterpret_cast<const float4x4*>(&value);
-        }
-    }
-
-    void Shader::SetTexture(const std::string& name, const Texture& texture) const {
-        if (!m_SRB) return;
-
-        // Get non-const texture view
-        ITextureView* pTextureView = const_cast<Texture&>(texture).GetDiligentTextureView();
-        if (!pTextureView) return;
-
-        if (auto* pVar = m_SRB->GetVariableByName(SHADER_TYPE_PIXEL, name.c_str())) {
-            pVar->Set(pTextureView);
-        }
     }
 
     bool Shader::CompileShader(const std::string& source, SHADER_TYPE type, IShader** ppShader) const {

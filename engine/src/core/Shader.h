@@ -2,8 +2,6 @@
 #include "DiligentCore/Graphics/GraphicsEngine/interface/PipelineState.h"
 #include "DiligentCore/Graphics/GraphicsEngine/interface/ShaderResourceBinding.h"
 #include "DiligentCore/Common/interface/RefCntAutoPtr.hpp"
-#include "Core/Matrix4x4.h"
-#include "Core/Texture.h"
 #include <string>
 #include "rendering/Renderer.h"
 
@@ -21,9 +19,6 @@ namespace Reality {
         bool LoadFromMemory(const std::string& vertexSrc, const std::string& pixelSrc);
 
         void Bind() const;
-
-        void SetUniform(const std::string& name, const Matrix4x4& value) const;
-        void SetTexture(const std::string& name, const Texture& texture) const;
 
         [[nodiscard]] IPipelineState* GetPipelineState() const { return m_PSO.RawPtr(); }
 

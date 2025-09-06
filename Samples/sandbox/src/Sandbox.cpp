@@ -1,7 +1,10 @@
 ﻿#include <Reality.h>
 
+#include "imgui.h"
+
 int main() {
-    // Initialize log
+
+    // Log class and macros.
     // Configure logging
     Log::GetInstance().SetLevel(Reality::LogLevel::Debug);
     Log::GetInstance().SetLogFile("engine.log");
@@ -10,56 +13,55 @@ int main() {
 
     // Log messages at different levels
     RLOG_TRACE("This is a trace message");
-    RLOG_DEBUG("Debug information");
+    RLOG_DEBUG("Debug class");
     RLOG_INFO("Application started successfully");
     RLOG_WARNING("This is a warning");
-    auto errorCode = 404;
-    RLOG_ERROR("An error occurred! %dx%d",errorCode,errorCode);
+    RLOG_ERROR("An error occurred, error code: %d",301);
     RLOG_FATAL("Critical failure!");
 
     // Using the class directly
     Log::GetInstance().Info("Direct access to logger");
 
-    // Initialize config.
-    Config AppConfig;
-    AppConfig.Set("Display", "Width", "1920");
-    AppConfig.Set("Display", "Height", "1080");
-    AppConfig.Set("Display", "VSync", "true");
-    AppConfig.Set("Display", "Gamma", "0.5");
-    AppConfig.Set("Audio", "Volume", "0.8");
-    AppConfig.Set("Audio", "MusicEnabled", "true");
+    // Config class.
+    // Set config values.
+    RLOG_DEBUG("Config class");
+    Config::GetInstance().Set("Display","Width","1920");
+    Config::GetInstance().Set("Display","Height","1080");
+    Config::GetInstance().Set("Display", "VSync", "true");
+    Config::GetInstance().Set("Display", "Gamma", "0.5");
+    Config::GetInstance().Set("Audio", "Volume", "0.8");
+    Config::GetInstance().Set("Audio", "MusicEnabled", "true");
 
-    // Get values as different types
-    const std::string widthStr = AppConfig.Get("Display", "Width");
-    const int width = AppConfig.GetInt("Display", "Width");
-    const bool vsync = AppConfig.GetBool("Display", "VSync");
-    const float gamma = AppConfig.GetFloat("Display", "Gamma");
+    // Get config values.
+    const std::string widthStr = Config::GetInstance().Get("Display", "Width");
+    const int width = Config::GetInstance().GetInt("Display", "Width");
+    const bool vsync = Config::GetInstance().GetBool("Display", "VSync");
+    const float gamma = Config::GetInstance().GetFloat("Display", "Gamma");
+    RLOG_INFO("Config Display width: %s",widthStr.c_str());
+    RLOG_INFO("Config Display gamma: %f",gamma);
+    RLOG_INFO("Config Display vsync: %s",vsync ? "true" : "false");
+    RLOG_INFO("Config Display gamma: %f",gamma);
 
-    std::cout << "Width (string): " << widthStr << "\n";
-    std::cout << "Width (int): " << width << "\n";
-    std::cout << "VSync: " << (vsync ? "true" : "false") << "\n";
-    std::cout << "Gamma: " << gamma << "\n";
-
-    // Save to INI file
-    if (AppConfig.Save("d:/AppConfig.ini")) {
-        std::cout << "Configuration saved successfully!\n";
+    // Save config ini file.
+    if (Config::GetInstance().Save("d:/AppConfig.ini")) {
+        RLOG_INFO("Config saved successfully");
     } else {
-        std::cout << "Failed to save configuration!\n";
+        RLOG_ERROR("Failed to save configuration");
     }
 
     // Clear current configuration
-    AppConfig.Clear();
+    Config::GetInstance().Clear();
 
     // Load from INI file
-    if (AppConfig.Load("d:/AppConfig.ini")) {
-        std::cout << "Configuration loaded successfully!\n";
+    if (Config::GetInstance().Load("d:/AppConfig.ini")) {
+        RLOG_INFO("Config loaded successfully");
 
         // Verify loaded values
-        std::cout << "Loaded Width: " << AppConfig.GetInt("Display", "Width") << "\n";
-        std::cout << "Loaded VSync: " << (AppConfig.GetBool("Display", "VSync") ? "true" : "false") << "\n";
-        std::cout << "Loaded Gamma: " << AppConfig.GetFloat("Display", "Gamma") << "\n";
+        RLOG_INFO("Loaded Width: %d", Config::GetInstance().GetInt("Display", "Width"));
+        RLOG_INFO("Loaded VSync: %s", (Config::GetInstance().GetBool("Display", "VSync") ? "true" : "false"));
+        RLOG_INFO("Loaded Gamma: %f", Config::GetInstance().GetFloat("Display", "Gamma"));
     } else {
-        std::cout << "Failed to load configuration!\n";
+        RLOG_ERROR("Failed to load configuration");
     }
 
     // Initialize application.

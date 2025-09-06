@@ -26,6 +26,16 @@ namespace Reality {
         }
 
     public:
+
+        static Config& GetInstance() {
+            static Config instance;
+            return instance;
+        }
+
+        // Delete copy constructor and assignment operator
+        Config(const Config&) = delete;
+        Config& operator=(const Config&) = delete;
+
         // Set a configuration value
         void Set(const std::string& section, const std::string& key, const std::string& value) {
             data[section][key] = value;
@@ -158,5 +168,11 @@ namespace Reality {
             }
             return false;
         }
+    private:
+        Config() = default;
+
+        ~Config() {
+            Clear();
+        };
     };
 }

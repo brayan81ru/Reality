@@ -8,13 +8,6 @@ add_library(Engine STATIC
         src/core/PrimitiveRenderer.cpp
         src/core/RealityApplication.cpp
         src/core/Timer.cpp
-        src/core/Vector3.h
-        src/core/Vector2.h
-        src/core/Color.h
-        src/core/Matrix4x4.h
-        src/core/Quaternion.h
-        src/core/TextureManager.cpp
-        src/core/Texture.cpp
         src/core/Shader.cpp
         src/rendering/ImguiBackend.cpp
         src/rendering/DisplayManager.cpp
