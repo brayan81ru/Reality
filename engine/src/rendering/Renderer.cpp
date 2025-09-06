@@ -72,7 +72,7 @@ namespace Reality {
         ImGui::Text("%dx%d",m_pSwapChain->GetDesc().Width,m_pSwapChain->GetDesc().Height);
         ImGui::Text("V-Sync: %s",vSync ? "Enabled" : "Disabled");
         ImGui::Text("FPS: %.2f", fps);
-        ImGui::Text("Frametime(ms): %.2f", frameTime);
+        ImGui::Text("Frame time(ms): %.2f", frameTime);
         ImGui::End();
         m_ImguiBackend->EndFrame(m_pImmediateContext);
     }
