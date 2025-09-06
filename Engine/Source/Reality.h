@@ -15,7 +15,6 @@
 #include <Core/BaseComponent.h>
 #include <Core/BaseGameObject.h>
 #include <Components/TransformComponent.h>
-
 #include "Core/Scene.h"
 
 using namespace Diligent;

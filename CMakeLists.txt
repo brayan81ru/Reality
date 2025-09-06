@@ -10,6 +10,6 @@ set(THIRD_PARTY_DIR ${CMAKE_SOURCE_DIR}/Engine/ThirdParty)
 # Add all subprojects
 add_subdirectory(Engine/ThirdParty/DiligentEngine)
 add_subdirectory(Engine)
-add_subdirectory(Samples/sandbox)
+add_subdirectory(Samples/Sandbox)
 
 

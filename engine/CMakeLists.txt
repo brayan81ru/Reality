@@ -1,23 +1,23 @@
 ﻿# Real library (not INTERFACE since you have .cpp files)
 
 add_library(Engine STATIC
-        Source/core/Scene.cpp
-        Source/components/TransformComponent.cpp
-        Source/core/BaseComponent.h
-        Source/core/BaseGameObject.cpp
-        Source/core/MathF.h
-        Source/core/Camera.cpp
-        Source/core/Config.h
+        Source/Core/Scene.cpp
+        Source/Components/TransformComponent.cpp
+        Source/Core/BaseComponent.h
+        Source/Core/BaseGameObject.cpp
+        Source/Core/MathF.h
+        Source/Core/Camera.cpp
+        Source/Core/Config.h
         Source/Reality.h
-        Source/core/Log.cpp
-        Source/core/PrimitiveRenderer.cpp
-        Source/core/RealityApplication.cpp
-        Source/core/Timer.cpp
-        Source/core/Shader.cpp
-        Source/rendering/ImguiBackend.cpp
-        Source/rendering/DisplayManager.cpp
-        Source/rendering/Renderer.cpp
-        Source/platform/Window.cpp
+        Source/Core/Log.cpp
+        Source/Core/PrimitiveRenderer.cpp
+        Source/Core/RealityApplication.cpp
+        Source/Core/Timer.cpp
+        Source/Core/Shader.cpp
+        Source/Rendering/ImguiBackend.cpp
+        Source/Rendering/DisplayManager.cpp
+        Source/Rendering/Renderer.cpp
+        Source/Platform/Window.cpp
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)

@@ -1,5 +1,4 @@
 ﻿#include <Reality.h>
-#include "imgui.h"
 #include "TestGameobject.h"
 
 int main() {
@@ -74,7 +73,7 @@ int main() {
     // Create a test camera not final.
     // TODO: Create the camera as a GameObject with a camera component.
     const auto camera = new Camera();
-    camera->SetPosition(Vector3f(0, 0, 5));
+    camera->SetPosition(Vector3f(0, 0, 20));
     camera->LookAt(Vector3f(0, 0, -15.f));
     camera->SetPerspective(60.0f, 0.1f, 100.0f);
 
@@ -84,7 +83,7 @@ int main() {
     // Create a game object
     const auto gameObject = mainScene->CreateGameObject<Reality::TestGameObject>();
 
-    gameObject->SetName("TestGameObject");
+    gameObject->SetName("TestGameObject1");
 
     mainScene->Initialize();
 
@@ -93,7 +92,7 @@ int main() {
 
         mainScene->Update(Timer::GetDeltaTime());
 
-        camera->MoveForward(2.0f*Timer::GetDeltaTime());
+        camera->MoveForward(10.0f*Timer::GetDeltaTime());
 
         camera->Render();
 
