@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "MathF.h"
-#include "Rendering/Renderer.h"
+#include <Core/MathF.h>
+#include <Rendering/Renderer.h>
 
 namespace Reality {
     class Camera {

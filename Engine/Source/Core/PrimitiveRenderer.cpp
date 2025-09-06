@@ -1,7 +1,7 @@
 ﻿#include "PrimitiveRenderer.h"
 #include "MapHelper.hpp"
-#include "Log.h"
 #include "GraphicsUtilities.h"
+#include <Core/MathF.h>
 
 namespace Reality {
 

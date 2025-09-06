@@ -1,8 +1,7 @@
-﻿#include "BaseGameObject.h"
-#include "../Components/TransformComponent.h"
+﻿#include <Core/BaseGameObject.h>
+#include <Components/TransformComponent.h>
 #include <algorithm>
 
-#include "DiligentTools/ThirdParty/args/args.hxx"
 
 namespace Reality {
     BaseGameObject::BaseGameObject()

@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include "../Core/BaseComponent.h"
-#include "../Core/MathF.h"
+#include <Core/BaseComponent.h>
+#include <Core/MathF.h>
 
 namespace Reality {
-    class BaseGameObject;
 
     class TransformComponent : public BaseComponent {
     public:

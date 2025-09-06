@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include <string>
-#include "Core/Timer.h"
-#include "Platform/Window.h"
-#include "Rendering/Renderer.h"
+
+
 
 namespace Reality {
-
+    class Renderer;
+    class Window;
     class RealityApplication {
         Window* m_window;
         Renderer* m_renderer;

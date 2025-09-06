@@ -1,4 +1,7 @@
 ﻿#include "RealityApplication.h"
+#include <Rendering/Renderer.h>
+#include <Platform/Window.h>
+#include <Core/Timer.h>
 
 namespace Reality {
     bool RealityApplication::IsRunning() const {

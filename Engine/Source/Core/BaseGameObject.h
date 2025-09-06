@@ -1,12 +1,14 @@
 ﻿#pragma once
+#include <string>
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
-#include "BaseComponent.h"
+
 
 namespace Reality {
     // Forward declarations
     class TransformComponent;
+    class BaseComponent;
 
     class BaseGameObject {
     public:

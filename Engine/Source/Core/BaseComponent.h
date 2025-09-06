@@ -21,7 +21,7 @@ namespace Reality {
 
         // GameObject association
         void SetGameObject(BaseGameObject* gameObject) { m_gameObject = gameObject; }
-        BaseGameObject* GetGameObject() const { return m_gameObject; }
+        [[nodiscard]] BaseGameObject* GetGameObject() const { return m_gameObject; }
 
         // Enable/Disable
         void SetEnabled(bool enabled) {
@@ -32,14 +32,14 @@ namespace Reality {
             }
         }
 
-        bool IsEnabled() const { return m_enabled; }
+        [[nodiscard]] bool IsEnabled() const { return m_enabled; }
 
         // Name management
         void SetName(const std::string& name) { m_name = name; }
-        const std::string& GetName() const { return m_name; }
+        [[nodiscard]] const std::string& GetName() const { return m_name; }
 
         // Type information
-        virtual const std::type_info& GetType() const = 0;
+        [[nodiscard]] virtual const std::type_info& GetType() const = 0;
 
     protected:
         BaseGameObject* m_gameObject;

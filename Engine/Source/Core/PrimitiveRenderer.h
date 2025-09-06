@@ -1,9 +1,5 @@
 ﻿#pragma once
-#include "Core/Camera.h"
-#include "Rendering/Renderer.h"
-#include "Core/Shader.h"
-#include "BasicMath.hpp"
-
+#include <Rendering/Renderer.h>
 using namespace Diligent;
 
 namespace Reality {
@@ -18,9 +14,9 @@ namespace Reality {
 
         void CreateIndexBuffer();
 
-        float4x4 GetAdjustedProjectionMatrix(float FOV, float NearPlane, float FarPlane) const;
+        [[nodiscard]] float4x4 GetAdjustedProjectionMatrix(float FOV, float NearPlane, float FarPlane) const;
 
-        float4x4 GetSurfacePretransformMatrix(const float3 &f3CameraViewAxis) const;
+        [[nodiscard]] float4x4 GetSurfacePretransformMatrix(const float3 &f3CameraViewAxis) const;
 
         void Render();
 
@@ -30,11 +26,10 @@ namespace Reality {
         RefCntAutoPtr<IBuffer>                m_CubeVertexBuffer;
         RefCntAutoPtr<IBuffer>                m_CubeIndexBuffer;
         Renderer* m_pRenderer;
-        Shader * m_pShader;
         bool m_ConvertPSOutputToGamma = true;
         int m_pEngineFactory;
         RefCntAutoPtr<IBuffer> m_VSConstants;
-        Diligent::Matrix4x4<float> m_WorldViewProjMatrix;
+        Matrix4x4<float> m_WorldViewProjMatrix;
     };
 
 } // namespace Reality

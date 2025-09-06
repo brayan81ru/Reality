@@ -1,6 +1,6 @@
 ﻿#include "Camera.h"
-#include "Rendering/Renderer.h"
-#include <cmath>
+#include <Rendering/Renderer.h>
+
 
 namespace Reality {
     Camera::Camera() {
