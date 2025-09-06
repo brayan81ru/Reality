@@ -1,26 +1,26 @@
 ﻿# Real library (not INTERFACE since you have .cpp files)
 
 add_library(Engine STATIC
-        src/core/Scene.cpp
-        src/components/TransformComponent.cpp
-        src/core/BaseComponent.h
-        src/core/BaseGameObject.cpp
-        src/core/MathF.h
-        src/core/Camera.cpp
-        src/core/Config.h
-        src/Reality.h
-        src/core/Log.cpp
-        src/core/PrimitiveRenderer.cpp
-        src/core/RealityApplication.cpp
-        src/core/Timer.cpp
-        src/core/Shader.cpp
-        src/rendering/ImguiBackend.cpp
-        src/rendering/DisplayManager.cpp
-        src/rendering/Renderer.cpp
-        src/platform/Window.cpp
+        Source/core/Scene.cpp
+        Source/components/TransformComponent.cpp
+        Source/core/BaseComponent.h
+        Source/core/BaseGameObject.cpp
+        Source/core/MathF.h
+        Source/core/Camera.cpp
+        Source/core/Config.h
+        Source/Reality.h
+        Source/core/Log.cpp
+        Source/core/PrimitiveRenderer.cpp
+        Source/core/RealityApplication.cpp
+        Source/core/Timer.cpp
+        Source/core/Shader.cpp
+        Source/rendering/ImguiBackend.cpp
+        Source/rendering/DisplayManager.cpp
+        Source/rendering/Renderer.cpp
+        Source/platform/Window.cpp
 )
 
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/third_party/SDL)
 
