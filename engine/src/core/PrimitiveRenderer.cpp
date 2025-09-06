@@ -5,8 +5,9 @@
 
 namespace Reality {
 
-    PrimitiveRenderer::PrimitiveRenderer(Renderer *renderer) {
-        m_pRenderer = renderer;
+    PrimitiveRenderer::PrimitiveRenderer() {
+
+        m_pRenderer = &Renderer::GetInstance();
 
         if (!m_pRenderer) {
             return;
@@ -20,7 +21,11 @@ namespace Reality {
 
 
     void PrimitiveRenderer::CreatePipelineState() {
+
         // Pipeline state object encompasses configuration of all GPU stages
+        if (!m_pRenderer) {
+            return;
+        }
 
         GraphicsPipelineStateCreateInfo PSOCreateInfo;
 
@@ -129,6 +134,10 @@ namespace Reality {
     }
 
     void PrimitiveRenderer::CreateVertexBuffer() {
+
+        if (!m_pRenderer) {
+            return;
+        }
         // Layout of this structure matches the one we defined in the pipeline state
         struct Vertex
         {
@@ -181,6 +190,10 @@ namespace Reality {
 
     void PrimitiveRenderer::CreateIndexBuffer()
     {
+        if (!m_pRenderer) {
+            return;
+        }
+
         // clang-format off
         constexpr Uint32 Indices[] =
         {
@@ -206,6 +219,7 @@ namespace Reality {
 
     float4x4 PrimitiveRenderer::GetAdjustedProjectionMatrix(const float FOV, const float NearPlane, const float FarPlane) const
     {
+
         const auto& SCDesc = m_pRenderer->GetSwapChain()->GetDesc();
 
         const float AspectRatio = static_cast<float>(SCDesc.Width) / static_cast<float>(SCDesc.Height);
@@ -268,17 +282,17 @@ namespace Reality {
         }
     }
 
-    void PrimitiveRenderer::Render(const Camera* camera)
+    void PrimitiveRenderer::Render()
     {
+        if (!m_pRenderer) {
+            return;
+        }
+
         // Initial transformations
         const float4x4 CubeModelTransform = float4x4::Translation(0.f,0.f,4.f)*float4x4::Scale(1.f,1.f,1.f)*float4x4::RotationX(0.f)*float4x4::RotationY(0.f)*float4x4::RotationZ(0.f);
 
-        // Apply the camera transformations.
-        const auto& scDesc = m_pRenderer->GetSwapChain()->GetDesc();
-        const float4x4 viewProj = camera->GetAdjustedViewProjectionMatrix(scDesc);
-
         // Compute world-view-projection matrix
-        m_WorldViewProjMatrix = CubeModelTransform*viewProj;
+        m_WorldViewProjMatrix = CubeModelTransform*Renderer::GetInstance().GetWorldProjectionMatrix();
 
         // Bind vertex and index buffers
         constexpr Uint64 offset   = 0;

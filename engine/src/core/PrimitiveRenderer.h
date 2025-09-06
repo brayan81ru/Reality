@@ -10,7 +10,7 @@ namespace Reality {
 
     class PrimitiveRenderer {
     public:
-        explicit PrimitiveRenderer(Renderer* renderer);
+        explicit PrimitiveRenderer();
 
         void CreatePipelineState();
 
@@ -22,7 +22,7 @@ namespace Reality {
 
         float4x4 GetSurfacePretransformMatrix(const float3 &f3CameraViewAxis) const;
 
-        void Render(const Camera* camera);
+        void Render();
 
     private:
         RefCntAutoPtr<IPipelineState>         m_pPSO;

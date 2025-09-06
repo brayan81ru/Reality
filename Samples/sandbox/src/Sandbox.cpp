@@ -66,10 +66,10 @@ int main() {
 
     // Initialize application.
     const auto Application = new RealityApplication();
-    Application->Initialize("Reality Engine - Sandbox",1280,720);
+    Application->Initialize("Reality Engine - Sandbox",1920,1080);
 
     // Create a primitive renderer.
-    const auto primitiveRenderer = new PrimitiveRenderer(&Renderer::GetInstance());
+    const auto primitiveRenderer = new PrimitiveRenderer();
 
     // Initialize camera with default settings
     const auto camera = new Camera();
@@ -77,12 +77,14 @@ int main() {
     // Create a camera.
     camera->SetPosition(float3(0, 1, -5));
     camera->LookAt(float3(0, 0, 0));
-    camera->SetPerspective(60.0f, 16.0f / 9.0f, 0.1f, 100.0f);
+    camera->SetPerspective(60.0f, 0.1f, 100.0f);
 
     while (Application->IsRunning()) {
         Application->Update();
 
-        primitiveRenderer->Render(camera);
+        camera->Render();
+
+        primitiveRenderer->Render();
 
         Application->Frame();
     }

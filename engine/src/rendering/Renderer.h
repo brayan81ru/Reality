@@ -4,6 +4,7 @@
 #include <RenderDevice.h>
 #include <rendering/ImguiBackend.h>
 #include <rendering/DisplayManager.h>
+#include "BasicMath.hpp"
 
 namespace Reality {
     struct RenderAPI {
@@ -76,25 +77,29 @@ namespace Reality {
 
         void RecreateSwapChain();
 
-        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::IRenderDevice> GetDevice() const { return m_pDevice;}
-        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::IDeviceContext> GetContext() const { return m_pImmediateContext;}
-        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::ISwapChain> GetSwapChain() const { return m_pSwapChain;}
-        [[nodiscard]] Diligent::IEngineFactory* GetEngineFactory() const { return m_pEngineFactory; };
-        [[nodiscard]] Diligent::RefCntAutoPtr<Diligent::IPipelineState> GetPSO() const { return m_pPSO; };
+        [[nodiscard]] RefCntAutoPtr<IRenderDevice> GetDevice() const { return m_pDevice;}
+        [[nodiscard]] RefCntAutoPtr<IDeviceContext> GetContext() const { return m_pImmediateContext;}
+        [[nodiscard]] RefCntAutoPtr<ISwapChain> GetSwapChain() const { return m_pSwapChain;}
+        [[nodiscard]] IEngineFactory* GetEngineFactory() const { return m_pEngineFactory; };
+        [[nodiscard]] RefCntAutoPtr<IPipelineState> GetPSO() const { return m_pPSO; };
+        [[nodiscard]] Matrix4x4<float> GetWorldProjectionMatrix() const { return m_WorldViewProjMatrix; }
         void GetWindowSize(uint32_t *width, uint32_t *height) const;
+
+        void SetWorldProjectionMatrix(const Matrix4x4<float> &WorldViewProjMatrix) { m_WorldViewProjMatrix = WorldViewProjMatrix; }
 
     private:
         bool m_Vsync = true;
         Window* m_RealityWindow{};
-        Diligent::NativeWindow m_Window;
+        NativeWindow m_Window;
         RenderAPI m_RenderAPI = RenderAPI::OpenGL;
-        Diligent::SwapChainDesc SCDesc;
-        Diligent::RefCntAutoPtr<Diligent::IRenderDevice>  m_pDevice;
-        Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_pImmediateContext;
-        Diligent::RefCntAutoPtr<Diligent::ISwapChain>     m_pSwapChain;
+        SwapChainDesc SCDesc;
+        RefCntAutoPtr<IRenderDevice>  m_pDevice;
+        RefCntAutoPtr<IDeviceContext> m_pImmediateContext;
+        RefCntAutoPtr<ISwapChain>     m_pSwapChain;
         ImguiBackend *m_ImguiBackend{};
-        Diligent::IEngineFactory *m_pEngineFactory{};
-        Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pPSO;
+        IEngineFactory *m_pEngineFactory{};
+        RefCntAutoPtr<IPipelineState> m_pPSO;
+        Matrix4x4<float> m_WorldViewProjMatrix;
 
         void InitializeRendererD3D11();
 

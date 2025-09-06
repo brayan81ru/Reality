@@ -1,10 +1,11 @@
 ﻿#include "Camera.h"
-#include <cmath>
+
+#include "rendering/Renderer.h"
 
 namespace Reality {
     // Helper function to convert quaternion to matrix
-    Diligent::float4x4 QuaternionToMatrix(const Diligent::Quaternion<float>& q) {
-        Diligent::float4x4 result;
+    float4x4 QuaternionToMatrix(const Quaternion<float>& q) {
+        float4x4 result;
         float xx = q.q.x * q.q.x;
         float xy = q.q.x * q.q.y;
         float xz = q.q.x * q.q.z;
@@ -39,8 +40,8 @@ namespace Reality {
     }
 
     // Helper function to convert matrix to quaternion
-    Diligent::Quaternion<float> MatrixToQuaternion(const Diligent::float4x4& m) {
-        Diligent::Quaternion<float> q;
+    Quaternion<float> MatrixToQuaternion(const float4x4& m) {
+        Quaternion<float> q;
         float trace = m._11 + m._22 + m._33;
 
         if (trace > 0) {
@@ -73,8 +74,8 @@ namespace Reality {
     }
 
     // Helper function to compute quaternion conjugate
-    Diligent::Quaternion<float> QuaternionConjugate(const Diligent::Quaternion<float>& q) {
-        Diligent::Quaternion<float> result;
+    Quaternion<float> QuaternionConjugate(const Quaternion<float>& q) {
+        Quaternion<float> result;
         result.q.x = -q.q.x;
         result.q.y = -q.q.y;
         result.q.z = -q.q.z;
@@ -83,33 +84,33 @@ namespace Reality {
     }
 
     Camera::Camera() {
-        SetPosition(Diligent::float3(0, 0, 5));
+        SetPosition(float3(0, 0, 5));
         // Create identity quaternion manually
         m_Rotation.q.x = 0;
         m_Rotation.q.y = 0;
         m_Rotation.q.z = 0;
         m_Rotation.q.w = 1;
-        SetPerspective(60.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
+        SetPerspective(60.0f, 0.1f, 1000.0f);
         UpdateViewMatrix();
     }
 
-    void Camera::SetPosition(const Diligent::float3& position) {
+    void Camera::SetPosition(const float3& position) {
         m_Position = position;
         m_ViewDirty = true;
     }
 
-    void Camera::SetRotation(const Diligent::Quaternion<float>& rotation) {
+    void Camera::SetRotation(const Quaternion<float>& rotation) {
         m_Rotation = rotation;
         m_ViewDirty = true;
     }
 
-    void Camera::LookAt(const Diligent::float3& target, const Diligent::float3& up) {
-        Diligent::float3 forward = Diligent::normalize(target - m_Position);
-        Diligent::float3 right = Diligent::normalize(Diligent::cross(up, forward));
-        Diligent::float3 upAdjusted = Diligent::cross(forward, right);
+    void Camera::LookAt(const float3& target, const float3& up) {
+        float3 forward = normalize(target - m_Position);
+        float3 right = normalize(cross(up, forward));
+        float3 upAdjusted = cross(forward, right);
 
         // Create rotation matrix
-        Diligent::float4x4 rotationMatrix;
+        float4x4 rotationMatrix;
         rotationMatrix._11 = right.x; rotationMatrix._12 = right.y; rotationMatrix._13 = right.z; rotationMatrix._14 = 0;
         rotationMatrix._21 = upAdjusted.x; rotationMatrix._22 = upAdjusted.y; rotationMatrix._23 = upAdjusted.z; rotationMatrix._24 = 0;
         rotationMatrix._31 = forward.x; rotationMatrix._32 = forward.y; rotationMatrix._33 = forward.z; rotationMatrix._34 = 0;
@@ -120,9 +121,12 @@ namespace Reality {
         m_ViewDirty = true;
     }
 
-    void Camera::SetPerspective(float fovDegrees, float aspectRatio, float nearClip, float farClip) {
+    void Camera::SetPerspective(const float fovDegrees, const float nearClip, const float farClip) {
+        const auto renderer = Renderer::GetInstance();
+        const auto swapChain = renderer.GetSwapChain();
+        const auto aspectRadio =static_cast<float>(swapChain->GetDesc().Width)/static_cast<float>(swapChain->GetDesc().Height);
         m_FOV = fovDegrees;
-        m_AspectRatio = aspectRatio;
+        m_AspectRatio = aspectRadio;
         m_NearClip = nearClip;
         m_FarClip = farClip;
         m_IsOrthographic = false;
@@ -138,59 +142,59 @@ namespace Reality {
         m_ProjectionDirty = true;
     }
 
-    const Diligent::float4x4& Camera::GetViewMatrix() const {
+    const float4x4& Camera::GetViewMatrix() const {
         if (m_ViewDirty) {
             const_cast<Camera*>(this)->UpdateViewMatrix();
         }
         return m_ViewMatrix;
     }
 
-    const Diligent::float4x4& Camera::GetProjectionMatrix() const {
+    const float4x4& Camera::GetProjectionMatrix() const {
         if (m_ProjectionDirty) {
             const_cast<Camera*>(this)->UpdateProjectionMatrix();
         }
         return m_ProjectionMatrix;
     }
 
-    Diligent::float4x4 Camera::GetViewProjectionMatrix() const {
+    float4x4 Camera::GetViewProjectionMatrix() const {
         return GetViewMatrix() * GetProjectionMatrix();
     }
 
-    Diligent::float4x4 Camera::GetAdjustedViewProjectionMatrix(const Diligent::SwapChainDesc& scDesc) const {
-        Diligent::float4x4 viewProj = GetViewMatrix() * GetProjectionMatrix();
+    float4x4 Camera::GetAdjustedViewProjectionMatrix(const SwapChainDesc& scDesc) const {
+        float4x4 viewProj = GetViewMatrix() * GetProjectionMatrix();
 
         // Apply surface pre-transform
-        Diligent::float4x4 srfPreTransform = GetSurfacePretransformMatrix(scDesc);
+        float4x4 srfPreTransform = GetSurfacePretransformMatrix(scDesc);
         return viewProj * srfPreTransform;
     }
 
-    const Diligent::float3& Camera::GetPosition() const {
+    const float3& Camera::GetPosition() const {
         return m_Position;
     }
 
-    const Diligent::Quaternion<float>& Camera::GetRotation() const {
+    const Quaternion<float>& Camera::GetRotation() const {
         return m_Rotation;
     }
 
-    Diligent::float3 Camera::GetForward() const {
+    float3 Camera::GetForward() const {
         // Convert quaternion to matrix using helper function and extract forward vector
-        Diligent::float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
-        return Diligent::float3(rotationMatrix._31, rotationMatrix._32, rotationMatrix._33);
+        float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
+        return {rotationMatrix._31, rotationMatrix._32, rotationMatrix._33};
     }
 
-    Diligent::float3 Camera::GetRight() const {
+    float3 Camera::GetRight() const {
         // Convert quaternion to matrix using helper function and extract right vector
-        Diligent::float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
-        return Diligent::float3(rotationMatrix._11, rotationMatrix._12, rotationMatrix._13);
+        float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
+        return {rotationMatrix._11, rotationMatrix._12, rotationMatrix._13};
     }
 
-    Diligent::float3 Camera::GetUp() const {
+    float3 Camera::GetUp() const {
         // Convert quaternion to matrix using helper function and extract up vector
-        Diligent::float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
-        return Diligent::float3(rotationMatrix._21, rotationMatrix._22, rotationMatrix._23);
+        float4x4 rotationMatrix = QuaternionToMatrix(m_Rotation);
+        return {rotationMatrix._21, rotationMatrix._22, rotationMatrix._23};
     }
 
-    void Camera::Move(const Diligent::float3& delta) {
+    void Camera::Move(const float3& delta) {
         SetPosition(m_Position + delta);
     }
 
@@ -206,9 +210,9 @@ namespace Reality {
         Move(GetUp() * distance);
     }
 
-    void Camera::Rotate(const Diligent::Quaternion<float>& rotation) {
+    void Camera::Rotate(const Quaternion<float>& rotation) {
         // Quaternion multiplication
-        Diligent::Quaternion<float> result;
+        Quaternion<float> result;
         result.q.x = m_Rotation.q.w * rotation.q.x + m_Rotation.q.x * rotation.q.w + m_Rotation.q.y * rotation.q.z - m_Rotation.q.z * rotation.q.y;
         result.q.y = m_Rotation.q.w * rotation.q.y - m_Rotation.q.x * rotation.q.z + m_Rotation.q.y * rotation.q.w + m_Rotation.q.z * rotation.q.x;
         result.q.z = m_Rotation.q.w * rotation.q.z + m_Rotation.q.x * rotation.q.y - m_Rotation.q.y * rotation.q.x + m_Rotation.q.z * rotation.q.w;
@@ -218,11 +222,11 @@ namespace Reality {
     }
 
     void Camera::RotateYaw(float angleDegrees) {
-        float angleRadians = angleDegrees * Diligent::PI_F / 180.0f;
+        float angleRadians = angleDegrees * PI_F / 180.0f;
         float halfAngle = angleRadians * 0.5f;
 
         // Create rotation quaternion around Y axis
-        Diligent::Quaternion<float> rotation;
+        Quaternion<float> rotation;
         rotation.q.x = 0;
         rotation.q.y = sinf(halfAngle);
         rotation.q.z = 0;
@@ -232,11 +236,11 @@ namespace Reality {
     }
 
     void Camera::RotatePitch(float angleDegrees) {
-        float angleRadians = angleDegrees * Diligent::PI_F / 180.0f;
+        float angleRadians = angleDegrees * PI_F / 180.0f;
         float halfAngle = angleRadians * 0.5f;
 
         // Create rotation quaternion around X axis
-        Diligent::Quaternion<float> rotation;
+        Quaternion<float> rotation;
         rotation.q.x = sinf(halfAngle);
         rotation.q.y = 0;
         rotation.q.z = 0;
@@ -246,11 +250,11 @@ namespace Reality {
     }
 
     void Camera::RotateRoll(float angleDegrees) {
-        float angleRadians = angleDegrees * Diligent::PI_F / 180.0f;
+        float angleRadians = angleDegrees * PI_F / 180.0f;
         float halfAngle = angleRadians * 0.5f;
 
         // Create rotation quaternion around Z axis
-        Diligent::Quaternion<float> rotation;
+        Quaternion<float> rotation;
         rotation.q.x = 0;
         rotation.q.y = 0;
         rotation.q.z = sinf(halfAngle);
@@ -259,13 +263,21 @@ namespace Reality {
         Rotate(rotation);
     }
 
+    void Camera::Render() const {
+        // Apply the camera transformations.
+
+        const auto& scDesc = Renderer::GetInstance().GetSwapChain()->GetDesc();
+        const float4x4 viewProj = GetAdjustedViewProjectionMatrix(scDesc);
+        Renderer::GetInstance().SetWorldProjectionMatrix(viewProj);
+    }
+
     void Camera::UpdateViewMatrix() {
         // Create view matrix from position and rotation
-        Diligent::float4x4 translation = Diligent::float4x4::Translation(-m_Position);
+        float4x4 translation = float4x4::Translation(-m_Position);
 
         // Create rotation matrix from quaternion conjugate using helper functions
-        Diligent::Quaternion<float> conjugate = QuaternionConjugate(m_Rotation);
-        Diligent::float4x4 rotationMatrix = QuaternionToMatrix(conjugate);
+        Quaternion<float> conjugate = QuaternionConjugate(m_Rotation);
+        float4x4 rotationMatrix = QuaternionToMatrix(conjugate);
 
         m_ViewMatrix = rotationMatrix * translation;
         m_ViewDirty = false;
@@ -279,29 +291,29 @@ namespace Reality {
             float bottom = -m_OrthoHeight / 2.0f;
             float top = m_OrthoHeight / 2.0f;
 
-            m_ProjectionMatrix = Diligent::float4x4::Ortho(1, 1, m_NearClip, m_FarClip, true);
+            m_ProjectionMatrix = float4x4::Ortho(1, 1, m_NearClip, m_FarClip, true);
         } else {
             // Perspective projection
-            float fovRad = m_FOV * Diligent::PI_F / 180.0f;
-            m_ProjectionMatrix = Diligent::float4x4::Projection(fovRad, m_AspectRatio, m_NearClip, m_FarClip, true);
+            const float fovRad = m_FOV * PI_F / 180.0f;
+            m_ProjectionMatrix = float4x4::Projection(fovRad, m_AspectRatio, m_NearClip, m_FarClip, true);
         }
         m_ProjectionDirty = false;
     }
 
-    Diligent::float4x4 Camera::GetSurfacePretransformMatrix(const Diligent::SwapChainDesc& scDesc) const {
-        Diligent::float3 viewAxis = GetForward();
+    float4x4 Camera::GetSurfacePretransformMatrix(const SwapChainDesc& scDesc) const {
+        float3 viewAxis = GetForward();
 
         switch (scDesc.PreTransform) {
-            case Diligent::SURFACE_TRANSFORM_ROTATE_90:
-                return Diligent::float4x4::RotationArbitrary(viewAxis, -Diligent::PI_F / 2.0f);
-            case Diligent::SURFACE_TRANSFORM_ROTATE_180:
-                return Diligent::float4x4::RotationArbitrary(viewAxis, -Diligent::PI_F);
-            case Diligent::SURFACE_TRANSFORM_ROTATE_270:
-                return Diligent::float4x4::RotationArbitrary(viewAxis, -Diligent::PI_F * 3.0f / 2.0f);
-            case Diligent::SURFACE_TRANSFORM_OPTIMAL:
-            case Diligent::SURFACE_TRANSFORM_IDENTITY:
+            case SURFACE_TRANSFORM_ROTATE_90:
+                return float4x4::RotationArbitrary(viewAxis, -PI_F / 2.0f);
+            case SURFACE_TRANSFORM_ROTATE_180:
+                return float4x4::RotationArbitrary(viewAxis, -PI_F);
+            case SURFACE_TRANSFORM_ROTATE_270:
+                return float4x4::RotationArbitrary(viewAxis, -PI_F * 3.0f / 2.0f);
+            case SURFACE_TRANSFORM_OPTIMAL:
+            case SURFACE_TRANSFORM_IDENTITY:
             default:
-                return Diligent::float4x4::Identity();
+                return float4x4::Identity();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Reality {
         void LookAt(const Diligent::float3& target, const Diligent::float3& up = Diligent::float3(0, 1, 0));
 
         // Projection settings
-        void SetPerspective(float fovDegrees, float aspectRatio, float nearClip, float farClip);
+        void SetPerspective(float fovDegrees, float nearClip, float farClip);
         void SetOrthographic(float width, float height, float nearClip, float farClip);
 
         // Matrix access
@@ -41,6 +41,9 @@ namespace Reality {
         void RotateYaw(float angleDegrees);
         void RotatePitch(float angleDegrees);
         void RotateRoll(float angleDegrees);
+
+        // Rendering
+        void Render() const;
 
     private:
         void UpdateViewMatrix();
