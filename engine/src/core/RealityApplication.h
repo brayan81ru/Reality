@@ -10,15 +10,17 @@ namespace Reality {
         Window* m_window;
         Renderer* m_renderer;
     public:
-        bool IsRunning();
+        [[nodiscard]] bool IsRunning() const;
 
-        RealityApplication(const std::string& title, int width, int height);
+        RealityApplication() = default;
 
-        void Update();
+        void Initialize(const std::string& title, int width, int height);
+
+        void Update() const;
 
         void Frame() const;
 
-        void Shutdown();
+        void Shutdown() const;
 
         [[nodiscard]] Renderer* GetRenderer() const {return m_renderer;}
 

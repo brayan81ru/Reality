@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "ImGuiUtils.hpp"
 #include "SDL_events.h"
+#include "core/Log.h"
 
 namespace Reality {
 
@@ -13,6 +14,7 @@ namespace Reality {
 
     bool ImguiBackend::Initialize(Diligent::IRenderDevice* device,Diligent::IDeviceContext* context, const Diligent::ISwapChain* swapChain,const char* fontPath){
 
+        RLOG_INFO("Initializing IMGUI backend...");
         if (m_Initialized) {
             return false;
         }
@@ -48,6 +50,8 @@ namespace Reality {
         m_ImGuiImpl->CreateDeviceObjects();
 
         m_Initialized = true;
+
+        RLOG_INFO("IMGUI backend initialized successfully");
 
         return m_Initialized;
     }

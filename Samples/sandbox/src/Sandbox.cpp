@@ -3,12 +3,11 @@
 #include "imgui.h"
 
 int main() {
-
     // Log class and macros.
     // Configure logging
     Log::GetInstance().SetLevel(Reality::LogLevel::Debug);
     Log::GetInstance().SetLogFile("engine.log");
-    Log::GetInstance().EnableFileOutput(true);
+    Log::GetInstance().EnableFileOutput(false);
     Log::GetInstance().EnableColors(true);
 
     // Log messages at different levels
@@ -37,7 +36,8 @@ int main() {
     const int width = Config::GetInstance().GetInt("Display", "Width");
     const bool vsync = Config::GetInstance().GetBool("Display", "VSync");
     const float gamma = Config::GetInstance().GetFloat("Display", "Gamma");
-    RLOG_INFO("Config Display width: %s",widthStr.c_str());
+    RLOG_INFO("Config Display width str: %s",widthStr.c_str());
+    RLOG_INFO("Config Display width: %d",width);
     RLOG_INFO("Config Display gamma: %f",gamma);
     RLOG_INFO("Config Display vsync: %s",vsync ? "true" : "false");
     RLOG_INFO("Config Display gamma: %f",gamma);
@@ -65,10 +65,11 @@ int main() {
     }
 
     // Initialize application.
-    RealityApplication Application("Reality Engine - Sandbox",1280,720);
+    const auto Application = new RealityApplication();
+    Application->Initialize("Reality Engine - Sandbox",1280,720);
 
     // Create a primitive renderer.
-    const auto primitiveRenderer = new PrimitiveRenderer(Application.GetRenderer());
+    const auto primitiveRenderer = new PrimitiveRenderer(&Renderer::GetInstance());
 
     // Initialize camera with default settings
     const auto camera = new Camera();
@@ -78,15 +79,15 @@ int main() {
     camera->LookAt(float3(0, 0, 0));
     camera->SetPerspective(60.0f, 16.0f / 9.0f, 0.1f, 100.0f);
 
-    while (Application.IsRunning()) {
-        Application.Update();
+    while (Application->IsRunning()) {
+        Application->Update();
 
         primitiveRenderer->Render(camera);
 
-        Application.Frame();
+        Application->Frame();
     }
 
-    Application.Shutdown();
+    Application->Shutdown();
 
     return 0;
 }

@@ -52,9 +52,13 @@ namespace Reality {
     class Renderer {
     public:
 
+        static Renderer& GetInstance();
+
         void Release() const;
 
-        Renderer(RenderAPI RenderApi, Window* Window);
+        void Initialize(RenderAPI RenderApi, Window* Window);
+
+        Renderer() = default;
 
         ~Renderer();
 
@@ -81,14 +85,14 @@ namespace Reality {
 
     private:
         bool m_Vsync = true;
-        Window* m_RealityWindow;
+        Window* m_RealityWindow{};
         Diligent::NativeWindow m_Window;
         RenderAPI m_RenderAPI = RenderAPI::OpenGL;
         Diligent::SwapChainDesc SCDesc;
         Diligent::RefCntAutoPtr<Diligent::IRenderDevice>  m_pDevice;
         Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_pImmediateContext;
         Diligent::RefCntAutoPtr<Diligent::ISwapChain>     m_pSwapChain;
-        ImguiBackend *m_ImguiBackend;
+        ImguiBackend *m_ImguiBackend{};
         Diligent::IEngineFactory *m_pEngineFactory{};
         Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_pPSO;
 

@@ -1,18 +1,18 @@
 ﻿#include "RealityApplication.h"
 
 namespace Reality {
-    bool RealityApplication::IsRunning() {
-        // TODO: implement is running method.
+    bool RealityApplication::IsRunning() const {
         return m_window->IsRunning();
     }
 
-    RealityApplication::RealityApplication(const std::string &title, int width, int height) {
+    void RealityApplication::Initialize(const std::string &title, const int width, const int height) {
         Timer::Init();
         m_window = new Window(title, width, height);
-        m_renderer = new Renderer(RenderAPI::Direct3D12, m_window);
+        m_renderer = &Renderer::GetInstance();
+        m_renderer->Initialize(RenderAPI::Direct3D12, m_window);
     }
 
-    void RealityApplication::Update() {
+    void RealityApplication::Update() const {
         m_window->Run();
         Timer::Update();
         m_renderer->Clear();
@@ -24,7 +24,7 @@ namespace Reality {
         m_renderer->Frame();
     }
 
-    void RealityApplication::Shutdown() {
+    void RealityApplication::Shutdown() const {
         m_renderer->~Renderer();
     }
 }

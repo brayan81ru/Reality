@@ -1,6 +1,5 @@
 ﻿#include "Renderer.h"
 #include <SDL.h>
-#include <iostream>
 #include <EngineFactoryD3D11.h>
 #include <EngineFactoryD3D12.h>
 #include <EngineFactoryOpenGL.h>
@@ -8,10 +7,21 @@
 #include <RefCntAutoPtr.hpp>
 #include <imgui.h>
 
+#include "core/Log.h"
+
 namespace Reality {
 
-    Renderer::Renderer(const RenderAPI RenderApi, Window* Window) {
-        std::cout << "RRenderer::Init" << std::endl;
+    Renderer & Renderer::GetInstance() {
+        static Renderer instance;
+        return instance;
+    }
+
+    void Renderer::Release() const {
+        delete this;
+    }
+
+    void Renderer::Initialize(const RenderAPI RenderApi, Window *Window) {
+        RLOG_INFO("Initializing renderer...");
 
         // Store the original windows.
         m_RealityWindow = Window;
@@ -37,24 +47,27 @@ namespace Reality {
             case RenderAPI::Vulkan: InitializeRendererVulkan(); break;
 
             default: {
-                std::cout << "Render API not supported" << std::endl;
+                RLOG_ERROR("Rendering API not supported");
             };
         }
 
         // Initialization
         m_ImguiBackend = new ImguiBackend();
         m_ImguiBackend->Initialize(m_pDevice, m_pImmediateContext, m_pSwapChain);
+        RLOG_INFO("Renderer initialized successfully");
     }
 
     Renderer::~Renderer() {
+        RLOG_INFO("Finalizing rendering system...");
         m_pSwapChain.Release();
         m_pDevice.Release();
+        RLOG_INFO("Rendering system finalized successfully ");
     }
 
     void Renderer::RenderStatsUI(const float fps, const float frameTime, bool vSync) const {
         m_ImguiBackend->BeginFrame(m_pSwapChain);
 
-        ImGui::Begin("STATS",0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+        ImGui::Begin("STATS",nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
         ImGui::Text("%s",m_RenderAPI.ToString());
         ImGui::Text("V-Sync: %s",vSync ? "Enabled" : "Disabled");
         ImGui::Text("FPS: %.2f", fps);
@@ -99,39 +112,47 @@ namespace Reality {
     }
 
     void Renderer::InitializeRendererD3D11() {
+        RLOG_INFO("Initializing D3D11 RHI...");
         const Diligent::EngineD3D11CreateInfo EngineCI;
         auto* pFactoryD3D11 = Diligent::GetEngineFactoryD3D11();
         pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryD3D11->CreateSwapChainD3D11(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
         m_pEngineFactory = pFactoryD3D11;
+        RLOG_INFO("D3D11 RHI initialized successfully");
     }
 
     void Renderer::InitializeRendererD3D12() {
+        RLOG_INFO("Initializing D3D12 RHI...");
         const Diligent::EngineD3D12CreateInfo EngineCI;
         auto* pFactoryD3D12 = Diligent::GetEngineFactoryD3D12();
         pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryD3D12->CreateSwapChainD3D12(m_pDevice, m_pImmediateContext, SCDesc, Diligent::FullScreenModeDesc{}, Window, &m_pSwapChain);
         m_pEngineFactory = pFactoryD3D12;
+        RLOG_INFO("D3D12 RHI initialized successfully");
     }
 
     void Renderer::InitializeRendererVulkan() {
+        RLOG_INFO("Initializing Vulkan RHI...");
         const Diligent::EngineVkCreateInfo EngineCI;
         auto* pFactoryVk = Diligent::GetEngineFactoryVk();
         pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_pDevice, &m_pImmediateContext);
         const Diligent::Win32NativeWindow Window{m_Window};
         pFactoryVk->CreateSwapChainVk(m_pDevice, m_pImmediateContext, SCDesc, Window, &m_pSwapChain);
         m_pEngineFactory = pFactoryVk;
+        RLOG_INFO("Vulkan RHI initialized successfully");
     }
 
     void Renderer::InitializeRendererOpenGL() {
+        RLOG_INFO("Initializing OpenGL RHI...");
         auto* pFactoryOpenGL = Diligent::GetEngineFactoryOpenGL();
         Diligent::EngineGLCreateInfo EngineCI;
         const Diligent::Win32NativeWindow Window{m_Window};
         EngineCI.Window.hWnd = Window.hWnd;
         pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_pDevice, &m_pImmediateContext,SCDesc, &m_pSwapChain);
         m_pEngineFactory = pFactoryOpenGL;
+        RLOG_INFO("OpenGL RHI initialized successfully");
     }
 
     void Renderer::RecreateSwapChain() {
