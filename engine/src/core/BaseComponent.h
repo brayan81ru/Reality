@@ -31,6 +31,7 @@ namespace Reality {
                 else OnDisable();
             }
         }
+
         bool IsEnabled() const { return m_enabled; }
 
         // Name management

@@ -82,15 +82,11 @@ int main() {
     // Create a scene.
     Scene mainScene;
 
-
     // Create a game object
     const auto gameObject = mainScene.CreateGameObject<Reality::TestGameObject>();
-
     gameObject->SetName("TestGameObject");
 
     mainScene.Initialize();
-
-    //
 
     while (Application->IsRunning()) {
         Application->Update();

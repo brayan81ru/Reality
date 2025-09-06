@@ -123,7 +123,6 @@ namespace Reality {
         snprintf(buffer.data(), buffer.size(), format, args...);
 
         return {buffer.data(), size};
-
     }
 
     template<typename... Args>

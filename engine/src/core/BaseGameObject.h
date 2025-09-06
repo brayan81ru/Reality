@@ -13,6 +13,7 @@ namespace Reality {
     class BaseGameObject {
     public:
         BaseGameObject();
+
         virtual ~BaseGameObject();
 
         // Lifecycle

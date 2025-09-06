@@ -2,6 +2,8 @@
 #include "TransformComponent.h"
 #include <algorithm>
 
+#include "DiligentTools/ThirdParty/args/args.hxx"
+
 namespace Reality {
     BaseGameObject::BaseGameObject()
         : m_parent(nullptr), m_transform(nullptr), m_name("GameObject"),

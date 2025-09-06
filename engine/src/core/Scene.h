@@ -9,6 +9,7 @@ namespace Reality {
     class Scene {
     public:
         Scene();
+
         ~Scene();
 
         // Scene lifecycle
@@ -29,15 +30,15 @@ namespace Reality {
         }
 
         void DestroyGameObject(BaseGameObject* gameObject);
+
         BaseGameObject* FindGameObject(const std::string& name);
 
         // Component management - implementation moved to header
         template<typename T>
         std::vector<T*> FindComponentsOfType() {
             std::vector<T*> components;
-            for (auto& gameObject : m_gameObjects) {
-                T* component = gameObject->GetComponent<T>();
-                if (component) {
+            for (const auto& gameObject : m_gameObjects) {
+                if (T* component = gameObject->GetComponent<T>()) {
                     components.push_back(component);
                 }
             }
@@ -49,6 +50,7 @@ namespace Reality {
 
     private:
         void ProcessPendingGameObjects();
+
         void ProcessDestroyedGameObjects();
 
         std::vector<std::unique_ptr<BaseGameObject>> m_gameObjects;

@@ -12,27 +12,27 @@ namespace Reality {
         // Process any pending game objects
         ProcessPendingGameObjects();
 
-        // Call Start on all components
+        // Start only root game objects (they will start their children recursively)
         for (const auto& gameObject : m_gameObjects) {
-            for (const auto& component : gameObject->GetComponents()) {
-                component->Start();
+            if (gameObject->GetParent() == nullptr) { // Only root objects
+                gameObject->Start();
             }
         }
 
         m_initialized = true;
     }
 
-    void Scene::Update(float deltaTime) {
+    void Scene::Update(const float deltaTime) {
         // Process any pending game objects
         ProcessPendingGameObjects();
 
         // Process destroyed game objects
         ProcessDestroyedGameObjects();
 
-        // Update all components
+        // Update only root game objects (they will update their children recursively)
         for (const auto& gameObject : m_gameObjects) {
-            for (const auto& component : gameObject->GetComponents()) {
-                component->Update(deltaTime);
+            if (gameObject->GetParent() == nullptr) { // Only root objects
+                gameObject->Update(deltaTime);
             }
         }
     }
@@ -42,7 +42,6 @@ namespace Reality {
         m_gameObjects.clear();
         m_pendingGameObjects.clear();
         m_destroyedGameObjects.clear();
-
         m_initialized = false;
     }
 
@@ -53,7 +52,6 @@ namespace Reality {
         const auto it = std::find(m_destroyedGameObjects.begin(),
                            m_destroyedGameObjects.end(),
                            gameObject);
-
         if (it == m_destroyedGameObjects.end()) {
             m_destroyedGameObjects.push_back(gameObject);
         }
@@ -73,15 +71,12 @@ namespace Reality {
 
         // Move all pending game objects to the main list
         for (auto& gameObject : m_pendingGameObjects) {
-            // If the scene is already initialized, call Start on components
-            if (m_initialized) {
-                for (const auto& component : gameObject->GetComponents()) {
-                    component->Start();
-                }
+            // If the scene is already initialized and it's a root object, start it
+            if (m_initialized && gameObject->GetParent() == nullptr) {
+                gameObject->Start();
             }
             m_gameObjects.push_back(std::move(gameObject));
         }
-
         m_pendingGameObjects.clear();
     }
 
@@ -94,12 +89,10 @@ namespace Reality {
                 [gameObject](const std::unique_ptr<BaseGameObject>& obj) {
                     return obj.get() == gameObject;
                 });
-
             if (it != m_gameObjects.end()) {
                 m_gameObjects.erase(it);
             }
         }
-
         m_destroyedGameObjects.clear();
     }
 }
