@@ -1,5 +1,4 @@
-﻿// Scene.cpp
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "BaseComponent.h"
 #include <algorithm>
 

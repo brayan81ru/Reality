@@ -71,27 +71,27 @@ int main() {
     // Create a primitive renderer.
     const auto primitiveRenderer = new PrimitiveRenderer();
 
-    // Initialize camera with default settings
+    // Create a test camera not final.
+    // TODO: Create the camera as a GameObject with a camera component.
     const auto camera = new Camera();
-
-    // Create a camera.
     camera->SetPosition(Vector3f(0, 0, 5));
     camera->LookAt(Vector3f(0, 0, -15.f));
     camera->SetPerspective(60.0f, 0.1f, 100.0f);
 
     // Create a scene.
-    Scene mainScene;
+    const auto mainScene = new Scene;
 
     // Create a game object
-    const auto gameObject = mainScene.CreateGameObject<Reality::TestGameObject>();
+    const auto gameObject = mainScene->CreateGameObject<Reality::TestGameObject>();
+
     gameObject->SetName("TestGameObject");
 
-    mainScene.Initialize();
+    mainScene->Initialize();
 
     while (Application->IsRunning()) {
         Application->Update();
 
-        mainScene.Update(Timer::GetDeltaTime());
+        mainScene->Update(Timer::GetDeltaTime());
 
         camera->MoveForward(2.0f*Timer::GetDeltaTime());
 

@@ -55,8 +55,6 @@ namespace Reality {
 
         static Renderer& GetInstance();
 
-        void Release() const;
-
         void Initialize(RenderAPI RenderApi, Window* Window);
 
         Renderer() = default;

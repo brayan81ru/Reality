@@ -1,7 +1,6 @@
 ﻿#include "TransformComponent.h"
 #include "BaseGameObject.h"
 #include <algorithm>
-
 #include "Log.h"
 
 namespace Reality {
@@ -9,10 +8,10 @@ namespace Reality {
         : m_localPosition(MathF::Vector3f(0, 0, 0)),
           m_localRotation(MathF::Quaternion::Identity()),
           m_localScale(MathF::Vector3f(1, 1, 1)),
+          m_scale(MathF::Vector3f(1, 1, 1)),
           m_position(MathF::Vector3f(0, 0, 0)),
           m_rotation(MathF::Quaternion::Identity()),
-          m_scale(MathF::Vector3f(1, 1, 1)),
-          m_parent(nullptr), m_transformDirty(true) {
+          m_transformDirty(true), m_parent(nullptr) {
     }
 
     void TransformComponent::Start() {
@@ -22,7 +21,7 @@ namespace Reality {
 
     void TransformComponent::Update(const float deltaTime) {
         BaseComponent::Update(deltaTime);
-        auto name = GetGameObject()->GetName();
+        const auto name = GetGameObject()->GetName();
         RLOG_INFO("[%s] - Transform Update",name.c_str());
         if (m_transformDirty) {
             UpdateTransform();
@@ -47,7 +46,7 @@ namespace Reality {
 
     void TransformComponent::SetScale(const MathF::Vector3f& scale) {
         if (m_parent) {
-            MathF::Vector3f parentScale = m_parent->GetScale();
+            const MathF::Vector3f parentScale = m_parent->GetScale();
             SetLocalScale(MathF::Vector3f(
                 scale.x / parentScale.x,
                 scale.y / parentScale.y,
@@ -149,25 +148,24 @@ namespace Reality {
     }
 
     void TransformComponent::AddChild(TransformComponent* child) {
-        if (child && std::find(m_children.begin(), m_children.end(), child) == m_children.end()) {
+        if (child && std::ranges::find(m_children, child) == m_children.end()) {
             m_children.push_back(child);
         }
     }
 
     void TransformComponent::RemoveChild(TransformComponent* child) {
-        auto it = std::find(m_children.begin(), m_children.end(), child);
-        if (it != m_children.end()) {
+        if (const auto it = std::ranges::find(m_children, child); it != m_children.end()) {
             m_children.erase(it);
         }
     }
 
     void TransformComponent::UpdateTransform() const {
         // Calculate local-to-world matrix
-        MathF::Matrix4x4 translation = MathF::Matrix4x4::Translation(m_localPosition);
-        MathF::Matrix4x4 rotation = m_localRotation.ToMatrix();
-        MathF::Matrix4x4 scale = MathF::Matrix4x4::Scale(m_localScale);
+        const MathF::Matrix4x4 translation = MathF::Matrix4x4::Translation(m_localPosition);
+        const MathF::Matrix4x4 rotation = m_localRotation.ToMatrix();
+        const MathF::Matrix4x4 scale = MathF::Matrix4x4::Scale(m_localScale);
 
-        MathF::Matrix4x4 localMatrix = translation * rotation * scale;
+        const MathF::Matrix4x4 localMatrix = translation * rotation * scale;
 
         if (m_parent) {
             m_localToWorldMatrix = m_parent->GetLocalToWorldMatrix() * localMatrix;
@@ -193,11 +191,11 @@ namespace Reality {
         m_transformDirty = false;
     }
 
-    void TransformComponent::MarkTransformDirty() {
+    void TransformComponent::MarkTransformDirty() const {
         m_transformDirty = true;
 
         // Mark all children as dirty
-        for (TransformComponent* child : m_children) {
+        for (const TransformComponent* child : m_children) {
             child->MarkTransformDirty();
         }
     }

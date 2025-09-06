@@ -107,7 +107,7 @@ namespace Reality {
         return true;
     }
 
-    std::vector<BaseComponent*> BaseGameObject::GetComponents() {
+    std::vector<BaseComponent*> BaseGameObject::GetComponents() const {
         std::vector<BaseComponent*> components;
         // Iterate through all component types in the map
         for (auto& pair : m_components) {
@@ -138,7 +138,7 @@ namespace Reality {
     }
 
     void BaseGameObject::AddChild(BaseGameObject* child) {
-        if (child && std::find(m_children.begin(), m_children.end(), child) == m_children.end()) {
+        if (child && std::ranges::find(m_children, child) == m_children.end()) {
             m_children.push_back(child);
             // If this game object has started, start the child
             if (m_started) {
@@ -147,14 +147,13 @@ namespace Reality {
         }
     }
 
-    void BaseGameObject::RemoveChild(BaseGameObject* child) {
-        auto it = std::find(m_children.begin(), m_children.end(), child);
-        if (it != m_children.end()) {
+    void BaseGameObject::RemoveChild(const BaseGameObject* child) {
+        if (const auto it = std::ranges::find(m_children, child); it != m_children.end()) {
             m_children.erase(it);
         }
     }
 
-    void BaseGameObject::UpdateChildren(const float deltaTime) {
+    void BaseGameObject::UpdateChildren(const float deltaTime) const {
         for (BaseGameObject* child : m_children) {
             child->Update(deltaTime);
         }
@@ -206,8 +205,7 @@ namespace Reality {
         auto it = m_components.find(type);
         if (it != m_components.end()) {
             for (BaseComponent* component : it->second) {
-                T* casted = dynamic_cast<T*>(component);
-                if (casted) {
+                if (T* casted = dynamic_cast<T*>(component)) {
                     return casted;
                 }
             }
@@ -225,8 +223,7 @@ namespace Reality {
         auto it = m_components.find(type);
         if (it != m_components.end()) {
             for (BaseComponent* component : it->second) {
-                T* casted = dynamic_cast<T*>(component);
-                if (casted) {
+                if (T* casted = dynamic_cast<T*>(component)) {
                     result.push_back(casted);
                 }
             }
@@ -263,8 +260,7 @@ namespace Reality {
         auto it = m_components.find(type);
         if (it != m_components.end()) {
             for (auto componentIt = it->second.begin(); componentIt != it->second.end(); ) {
-                T* casted = dynamic_cast<T*>(*componentIt);
-                if (casted) {
+                if (T* casted = dynamic_cast<T*>(*componentIt)) {
                     casted->OnDestroy();
                     delete casted;
                     componentIt = it->second.erase(componentIt);

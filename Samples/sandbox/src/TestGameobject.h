@@ -2,7 +2,7 @@
 #include <Reality.h>
 
 namespace Reality {
-    class TestGameObject: public BaseGameObject{
+    class TestGameObject final : public BaseGameObject{
 
     };
 } // Reality

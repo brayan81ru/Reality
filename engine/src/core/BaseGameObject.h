@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include <vector>
-#include <memory>
 #include <unordered_map>
 #include <typeindex>
-#include <algorithm>
 #include "BaseComponent.h"
 
 namespace Reality {
@@ -23,7 +21,7 @@ namespace Reality {
 
         // Name management
         void SetName(const std::string& name) { m_name = name; }
-        const std::string& GetName() const { return m_name; }
+        [[nodiscard]] const std::string& GetName() const { return m_name; }
 
         // Component management
         template<typename T>
@@ -36,32 +34,32 @@ namespace Reality {
         std::vector<T*> GetComponents() const;
 
         template<typename T>
-        bool HasComponent() const;
+        [[nodiscard]] bool HasComponent() const;
 
         template<typename T>
         void RemoveComponent();
 
         // Special access to Transform
-        TransformComponent* GetTransform() const { return m_transform; }
+        [[nodiscard]] TransformComponent* GetTransform() const { return m_transform; }
 
         // Hierarchy
         void SetParent(BaseGameObject* parent);
-        BaseGameObject* GetParent() const { return m_parent; }
-        const std::vector<BaseGameObject*>& GetChildren() const { return m_children; }
+        [[nodiscard]] BaseGameObject* GetParent() const { return m_parent; }
+        [[nodiscard]] const std::vector<BaseGameObject*>& GetChildren() const { return m_children; }
 
         // Active state
         void SetActive(bool active);
-        bool IsActive() const { return m_active; }
-        bool IsActiveInHierarchy() const;
+        [[nodiscard]] bool IsActive() const { return m_active; }
+        [[nodiscard]] bool IsActiveInHierarchy() const;
 
-        std::vector<BaseComponent *> GetComponents();
+        std::vector<BaseComponent *> GetComponents() const;
 
         // Tag and Layer (Unity-like)
         void SetTag(const std::string& tag) { m_tag = tag; }
-        const std::string& GetTag() const { return m_tag; }
+        [[nodiscard]] const std::string& GetTag() const { return m_tag; }
 
         void SetLayer(int layer) { m_layer = layer; }
-        int GetLayer() const { return m_layer; }
+        [[nodiscard]] int GetLayer() const { return m_layer; }
 
     private:
         std::unordered_map<std::type_index, std::vector<BaseComponent*>> m_components;
@@ -77,7 +75,7 @@ namespace Reality {
 
         // Internal methods
         void AddChild(BaseGameObject* child);
-        void RemoveChild(BaseGameObject* child);
-        void UpdateChildren(float deltaTime);
+        void RemoveChild(const BaseGameObject* child);
+        void UpdateChildren(float deltaTime) const;
     };
 }

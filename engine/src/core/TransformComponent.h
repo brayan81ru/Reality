@@ -8,12 +8,14 @@ namespace Reality {
     class TransformComponent : public BaseComponent {
     public:
         TransformComponent();
-        virtual ~TransformComponent() = default;
+        ~TransformComponent() override;
 
         // Override base methods
-        virtual void Start() override;
-        virtual void Update(float deltaTime) override;
-        virtual const std::type_info& GetType() const override { return typeid(TransformComponent); }
+        void Start() override;
+
+        void Update(float deltaTime) override;
+
+        const std::type_info& GetType() const override { return typeid(TransformComponent); }
 
         // Transform properties
         void SetPosition(const MathF::Vector3f& position);
@@ -73,6 +75,8 @@ namespace Reality {
         void AddChild(TransformComponent* child);
         void RemoveChild(TransformComponent* child);
         void UpdateTransform() const;
-        void MarkTransformDirty();
+        void MarkTransformDirty() const;
     };
+
+    inline TransformComponent::~TransformComponent() = default;
 }

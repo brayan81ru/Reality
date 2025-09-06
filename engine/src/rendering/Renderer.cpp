@@ -16,10 +16,6 @@ namespace Reality {
         return instance;
     }
 
-    void Renderer::Release() const {
-        delete this;
-    }
-
     void Renderer::Initialize(const RenderAPI RenderApi, Window *Window) {
         RLOG_INFO("Initializing renderer...");
 
@@ -58,10 +54,8 @@ namespace Reality {
     }
 
     Renderer::~Renderer() {
-        RLOG_INFO("Finalizing rendering system...");
-        m_pSwapChain.Release();
         m_pDevice.Release();
-        RLOG_INFO("Rendering system finalized successfully ");
+        m_pSwapChain.Release();
     }
 
     void Renderer::RenderStatsUI(const float fps, const float frameTime, bool vSync) const {
