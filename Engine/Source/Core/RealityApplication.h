@@ -1,11 +1,11 @@
 ﻿#pragma once
 #include <string>
 
-
-
 namespace Reality {
     class Renderer;
     class Window;
+    class string;
+
     class RealityApplication {
         Window* m_window;
         Renderer* m_renderer;

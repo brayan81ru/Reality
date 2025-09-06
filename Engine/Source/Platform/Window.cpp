@@ -2,8 +2,7 @@
 #include <stdexcept>
 #include <NativeWindow.h>
 #include <SDL_syswm.h>
-
-#include "Rendering/Renderer.h"
+#include <Rendering/Renderer.h>
 
 namespace Reality {
     NativeWindow Window::SDLWindowToNativeWindow(SDL_Window *window) {
