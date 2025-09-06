@@ -152,6 +152,8 @@ namespace Reality::MathF {
         explicit Vector4f(const Diligent::float4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
         explicit Vector4f(const Vector3f& v, const float w = 0.0f) : x(v.x), y(v.y), z(v.z), w(w) {}
         explicit Vector4f(const __m128 vec) { _mm_store_ps(&x, vec); }
+        // Conversion to Vector3f (ignores w component)
+        explicit operator Vector3f() const { return Vector3f(x, y, z); }
 
         // Conversion to Diligent type
         explicit operator Diligent::float4() const { return {x, y, z, w}; }
@@ -199,6 +201,7 @@ namespace Reality::MathF {
     // ==================== Matrix4x4 ====================
     class alignas(16) Matrix4x4 {
         public:
+
         // Constructors
         constexpr Matrix4x4() {
             // Identity matrix
@@ -207,10 +210,70 @@ namespace Reality::MathF {
             m[2] = 0; m[6] = 0; m[10] = 1; m[14] = 0;
             m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
         }
+
         explicit Matrix4x4(const Diligent::float4x4& mat) {
             for (int i = 0; i < 16; ++i) {
                 m[i] = (&mat._11)[i];
             }
+        }
+
+        // Inverse of the matrix
+        Matrix4x4 Inverse() const {
+            Matrix4x4 result;
+
+            // Calculate the determinant
+            const float det =
+                m[0] * (m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] +
+                        m[6] * m[11] * m[13] + m[7] * m[9] * m[14] - m[7] * m[10] * m[13]) -
+                m[1] * (m[4] * m[10] * m[15] - m[4] * m[11] * m[14] - m[6] * m[8] * m[15] +
+                        m[6] * m[11] * m[12] + m[7] * m[8] * m[14] - m[7] * m[10] * m[12]) +
+                m[2] * (m[4] * m[9] * m[15] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] +
+                        m[5] * m[11] * m[12] + m[7] * m[8] * m[13] - m[7] * m[9] * m[12]) -
+                m[3] * (m[4] * m[9] * m[14] - m[4] * m[10] * m[13] - m[5] * m[8] * m[14] +
+                        m[5] * m[10] * m[12] + m[6] * m[8] * m[13] - m[6] * m[9] * m[12]);
+
+            // If determinant is zero, the matrix is not invertible
+            if (std::abs(det) < 1e-6) {
+                return Matrix4x4(); // Return identity matrix as fallback
+            }
+
+            const float invDet = 1.0f / det;
+
+            // Calculate the adjugate matrix
+            result.m[0] = (m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[6] * m[9] * m[15] +
+                           m[6] * m[11] * m[13] + m[7] * m[9] * m[14] - m[7] * m[10] * m[13]) * invDet;
+            result.m[1] = (m[1] * m[10] * m[15] - m[1] * m[11] * m[14] - m[2] * m[9] * m[15] +
+                           m[2] * m[11] * m[13] + m[3] * m[9] * m[14] - m[3] * m[10] * m[13]) * -invDet;
+            result.m[2] = (m[1] * m[6] * m[15] - m[1] * m[7] * m[14] - m[2] * m[5] * m[15] +
+                           m[2] * m[7] * m[13] + m[3] * m[5] * m[14] - m[3] * m[6] * m[13]) * invDet;
+            result.m[3] = (m[1] * m[6] * m[11] - m[1] * m[7] * m[10] - m[2] * m[5] * m[11] +
+                           m[2] * m[7] * m[9] + m[3] * m[5] * m[10] - m[3] * m[6] * m[9]) * -invDet;
+            result.m[4] = (m[4] * m[10] * m[15] - m[4] * m[11] * m[14] - m[6] * m[8] * m[15] +
+                           m[6] * m[11] * m[12] + m[7] * m[8] * m[14] - m[7] * m[10] * m[12]) * -invDet;
+            result.m[5] = (m[0] * m[10] * m[15] - m[0] * m[11] * m[14] - m[2] * m[8] * m[15] +
+                           m[2] * m[11] * m[12] + m[3] * m[8] * m[14] - m[3] * m[10] * m[12]) * invDet;
+            result.m[6] = (m[0] * m[6] * m[15] - m[0] * m[7] * m[14] - m[2] * m[4] * m[15] +
+                           m[2] * m[7] * m[12] + m[3] * m[4] * m[14] - m[3] * m[6] * m[12]) * -invDet;
+            result.m[7] = (m[0] * m[6] * m[11] - m[0] * m[7] * m[10] - m[2] * m[4] * m[11] +
+                           m[2] * m[7] * m[8] + m[3] * m[4] * m[10] - m[3] * m[6] * m[8]) * invDet;
+            result.m[8] = (m[4] * m[9] * m[15] - m[4] * m[11] * m[13] - m[5] * m[8] * m[15] +
+                           m[5] * m[11] * m[12] + m[7] * m[8] * m[13] - m[7] * m[9] * m[12]) * invDet;
+            result.m[9] = (m[0] * m[9] * m[15] - m[0] * m[11] * m[13] - m[1] * m[8] * m[15] +
+                           m[1] * m[11] * m[12] + m[3] * m[8] * m[13] - m[3] * m[9] * m[12]) * -invDet;
+            result.m[10] = (m[0] * m[5] * m[15] - m[0] * m[7] * m[13] - m[1] * m[4] * m[15] +
+                            m[1] * m[7] * m[12] + m[3] * m[4] * m[13] - m[3] * m[5] * m[12]) * invDet;
+            result.m[11] = (m[0] * m[5] * m[11] - m[0] * m[7] * m[9] - m[1] * m[4] * m[11] +
+                            m[1] * m[7] * m[8] + m[3] * m[4] * m[9] - m[3] * m[5] * m[8]) * -invDet;
+            result.m[12] = (m[4] * m[9] * m[14] - m[4] * m[10] * m[13] - m[5] * m[8] * m[14] +
+                            m[5] * m[10] * m[12] + m[6] * m[8] * m[13] - m[6] * m[9] * m[12]) * -invDet;
+            result.m[13] = (m[0] * m[9] * m[14] - m[0] * m[10] * m[13] - m[1] * m[8] * m[14] +
+                            m[1] * m[10] * m[12] + m[2] * m[8] * m[13] - m[2] * m[9] * m[12]) * invDet;
+            result.m[14] = (m[0] * m[5] * m[14] - m[0] * m[6] * m[13] - m[1] * m[4] * m[14] +
+                            m[1] * m[6] * m[12] + m[2] * m[4] * m[13] - m[2] * m[5] * m[12]) * -invDet;
+            result.m[15] = (m[0] * m[5] * m[10] - m[0] * m[6] * m[9] - m[1] * m[4] * m[10] +
+                            m[1] * m[6] * m[8] + m[2] * m[4] * m[9] - m[2] * m[5] * m[8]) * invDet;
+
+            return result;
         }
 
         // Conversion to Diligent type

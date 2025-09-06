@@ -3,21 +3,21 @@
 #include <algorithm>
 
 namespace Reality {
-    BaseGameObject::BaseGameObject() 
-        : m_parent(nullptr), m_transform(nullptr), m_name("GameObject"), 
+    BaseGameObject::BaseGameObject()
+        : m_parent(nullptr), m_transform(nullptr), m_name("GameObject"),
           m_tag("Untagged"), m_layer(0), m_active(true), m_started(false) {
         // Every GameObject has a TransformComponent
         m_transform = AddComponent<TransformComponent>();
     }
-    
+
     BaseGameObject::~BaseGameObject() {
         OnDestroy();
     }
-    
+
     void BaseGameObject::Start() {
         if (!m_started) {
             m_started = true;
-            
+
             // Start all components
             for (auto& pair : m_components) {
                 for (BaseComponent* component : pair.second) {
@@ -28,10 +28,10 @@ namespace Reality {
             }
         }
     }
-    
+
     void BaseGameObject::Update(float deltaTime) {
         if (!m_active) return;
-        
+
         // Update all components
         for (auto& pair : m_components) {
             for (BaseComponent* component : pair.second) {
@@ -40,11 +40,11 @@ namespace Reality {
                 }
             }
         }
-        
+
         // Update children
         UpdateChildren(deltaTime);
     }
-    
+
     void BaseGameObject::OnDestroy() {
         // Destroy all components
         for (auto& pair : m_components) {
@@ -54,12 +54,12 @@ namespace Reality {
             }
         }
         m_components.clear();
-        
+
         // Remove from parent
         if (m_parent) {
             m_parent->RemoveChild(this);
         }
-        
+
         // Destroy children
         for (BaseGameObject* child : m_children) {
             child->OnDestroy();
@@ -67,11 +67,11 @@ namespace Reality {
         }
         m_children.clear();
     }
-    
+
     void BaseGameObject::SetActive(bool active) {
         if (m_active != active) {
             m_active = active;
-            
+
             if (active) {
                 // Re-enable components
                 for (auto& pair : m_components) {
@@ -93,43 +93,58 @@ namespace Reality {
             }
         }
     }
-    
+
     bool BaseGameObject::IsActiveInHierarchy() const {
         if (!m_active) return false;
         if (m_parent) return m_parent->IsActiveInHierarchy();
         return true;
     }
-    
+
+    std::vector<BaseComponent*> BaseGameObject::GetComponents() {
+        std::vector<BaseComponent*> components;
+
+        // Iterate through all component types in the map
+        for (auto& pair : m_components) {
+            // pair is a std::pair<std::type_index, std::vector<BaseComponent*>>
+            // pair.second is the std::vector<BaseComponent*>
+            for (BaseComponent* component : pair.second) {
+                components.push_back(component);
+            }
+        }
+
+        return components;
+    }
+
     void BaseGameObject::SetParent(BaseGameObject* parent) {
         if (m_parent == parent) return;
-        
+
         // Remove from current parent
         if (m_parent) {
             m_parent->RemoveChild(this);
         }
-        
+
         // Set new parent
         m_parent = parent;
-        
+
         // Add to new parent
         if (m_parent) {
             m_parent->AddChild(this);
         }
     }
-    
+
     void BaseGameObject::AddChild(BaseGameObject* child) {
         if (child && std::find(m_children.begin(), m_children.end(), child) == m_children.end()) {
             m_children.push_back(child);
         }
     }
-    
+
     void BaseGameObject::RemoveChild(BaseGameObject* child) {
         auto it = std::find(m_children.begin(), m_children.end(), child);
         if (it != m_children.end()) {
             m_children.erase(it);
         }
     }
-    
+
     void BaseGameObject::UpdateChildren(float deltaTime) {
         for (BaseGameObject* child : m_children) {
             child->Update(deltaTime);

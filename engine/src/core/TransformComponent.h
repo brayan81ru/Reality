@@ -57,6 +57,7 @@ namespace Reality {
         MathF::Vector3f m_localPosition;
         MathF::Quaternion m_localRotation;
         MathF::Vector3f m_localScale;
+        mutable MathF::Vector3f m_scale; // World scale
 
         // Cache
         mutable MathF::Matrix4x4 m_localToWorldMatrix;

@@ -79,8 +79,22 @@ int main() {
     camera->LookAt(Vector3f(0, 0, -15.f));
     camera->SetPerspective(60.0f, 0.1f, 100.0f);
 
+    // Create a scene.
+    Scene mainScene;
+
+
+    // Create a game object
+    const auto gameObject = mainScene.CreateGameObject<Reality::TestGameObject>();
+    gameObject->SetName("TestGameObject");
+
+    mainScene.Initialize();
+
+    //
+
     while (Application->IsRunning()) {
         Application->Update();
+
+        mainScene.Update(Timer::GetDeltaTime());
 
         camera->MoveForward(2.0f*Timer::GetDeltaTime());
 

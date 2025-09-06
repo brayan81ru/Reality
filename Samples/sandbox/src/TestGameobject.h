@@ -3,7 +3,7 @@
 
 namespace Reality {
 
-class TestGameObject: BaseGameObject{
+class TestGameObject: public BaseGameObject{
 
 };
 

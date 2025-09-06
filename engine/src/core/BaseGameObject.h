@@ -53,6 +53,8 @@ namespace Reality {
         bool IsActive() const { return m_active; }
         bool IsActiveInHierarchy() const;
 
+        std::vector<BaseComponent *> GetComponents();
+
         // Tag and Layer (Unity-like)
         void SetTag(const std::string& tag) { m_tag = tag; }
         const std::string& GetTag() const { return m_tag; }
@@ -62,6 +64,7 @@ namespace Reality {
 
     private:
         std::unordered_map<std::type_index, std::vector<BaseComponent*>> m_components;
+
         std::vector<BaseGameObject*> m_children;
         BaseGameObject* m_parent;
         TransformComponent* m_transform;

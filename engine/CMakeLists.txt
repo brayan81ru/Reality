@@ -1,6 +1,7 @@
 ﻿# Real library (not INTERFACE since you have .cpp files)
 
 add_library(Engine STATIC
+        src/core/Scene.cpp
         src/core/TransformComponent.cpp
         src/core/BaseComponent.h
         src/core/BaseGameObject.cpp

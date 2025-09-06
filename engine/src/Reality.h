@@ -16,6 +16,8 @@
 #include <core/BaseGameObject.h>
 #include <core/TransformComponent.h>
 
+#include "core/Scene.h"
+
 using namespace Diligent;
 
 using Reality::Log;
@@ -46,6 +48,11 @@ using Reality::BaseComponent;
 
 using Reality::TransformComponent;
 
+using Reality::Scene;
+
+using Reality::TransformComponent;
+
 using namespace Reality::MathF;
+
 
 

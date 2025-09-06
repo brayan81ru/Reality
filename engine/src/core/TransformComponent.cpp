@@ -2,11 +2,16 @@
 #include "BaseGameObject.h"
 #include <algorithm>
 
+#include "Log.h"
+
 namespace Reality {
     TransformComponent::TransformComponent()
         : m_localPosition(MathF::Vector3f(0, 0, 0)),
           m_localRotation(MathF::Quaternion::Identity()),
           m_localScale(MathF::Vector3f(1, 1, 1)),
+          m_position(MathF::Vector3f(0, 0, 0)),
+          m_rotation(MathF::Quaternion::Identity()),
+          m_scale(MathF::Vector3f(1, 1, 1)),
           m_parent(nullptr), m_transformDirty(true) {
     }
 
@@ -15,7 +20,7 @@ namespace Reality {
         UpdateTransform();
     }
 
-    void TransformComponent::Update(float deltaTime) {
+    void TransformComponent::Update(const float deltaTime) {
         BaseComponent::Update(deltaTime);
         if (m_transformDirty) {
             UpdateTransform();
@@ -78,11 +83,7 @@ namespace Reality {
 
     MathF::Vector3f TransformComponent::GetScale() const {
         if (m_transformDirty) UpdateTransform();
-        return MathF::Vector3f(
-            m_localScale.x * (m_parent ? m_parent->GetScale().x : 1.0f),
-            m_localScale.y * (m_parent ? m_parent->GetScale().y : 1.0f),
-            m_localScale.z * (m_parent ? m_parent->GetScale().z : 1.0f)
-        );
+        return m_scale;
     }
 
     MathF::Matrix4x4 TransformComponent::GetLocalToWorldMatrix() const {
@@ -111,19 +112,19 @@ namespace Reality {
     }
 
     MathF::Vector3f TransformComponent::TransformPoint(const MathF::Vector3f& point) const {
-        return GetLocalToWorldMatrix() * MathF::Vector4f(point, 1.0f);
+        return static_cast<MathF::Vector3f>(GetLocalToWorldMatrix() * MathF::Vector4f(point, 1.0f));
     }
 
     MathF::Vector3f TransformComponent::InverseTransformPoint(const MathF::Vector3f& point) const {
-        return GetWorldToLocalMatrix() * MathF::Vector4f(point, 1.0f);
+        return static_cast<MathF::Vector3f>(GetWorldToLocalMatrix() * MathF::Vector4f(point, 1.0f));
     }
 
     MathF::Vector3f TransformComponent::TransformDirection(const MathF::Vector3f& direction) const {
-        return GetLocalToWorldMatrix() * MathF::Vector4f(direction, 0.0f);
+        return static_cast<MathF::Vector3f>(GetLocalToWorldMatrix() * MathF::Vector4f(direction, 0.0f));
     }
 
     MathF::Vector3f TransformComponent::InverseTransformDirection(const MathF::Vector3f& direction) const {
-        return GetWorldToLocalMatrix() * MathF::Vector4f(direction, 0.0f);
+        return static_cast<MathF::Vector3f>(GetWorldToLocalMatrix() * MathF::Vector4f(direction, 0.0f));
     }
 
     void TransformComponent::SetParent(TransformComponent* parent) {
@@ -169,9 +170,15 @@ namespace Reality {
         if (m_parent) {
             m_localToWorldMatrix = m_parent->GetLocalToWorldMatrix() * localMatrix;
             m_rotation = m_parent->GetRotation() * m_localRotation;
+            m_scale = MathF::Vector3f(
+                m_localScale.x * m_parent->GetScale().x,
+                m_localScale.y * m_parent->GetScale().y,
+                m_localScale.z * m_parent->GetScale().z
+            );
         } else {
             m_localToWorldMatrix = localMatrix;
             m_rotation = m_localRotation;
+            m_scale = m_localScale;
         }
 
         // Extract position from matrix
