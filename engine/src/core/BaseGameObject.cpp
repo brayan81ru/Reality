@@ -29,7 +29,7 @@ namespace Reality {
         }
     }
 
-    void BaseGameObject::Update(float deltaTime) {
+    void BaseGameObject::Update(const float deltaTime) {
         if (!m_active) return;
 
         // Update all components
@@ -68,7 +68,7 @@ namespace Reality {
         m_children.clear();
     }
 
-    void BaseGameObject::SetActive(bool active) {
+    void BaseGameObject::SetActive(const bool active) {
         if (m_active != active) {
             m_active = active;
 
@@ -145,7 +145,7 @@ namespace Reality {
         }
     }
 
-    void BaseGameObject::UpdateChildren(float deltaTime) {
+    void BaseGameObject::UpdateChildren(const float deltaTime) {
         for (BaseGameObject* child : m_children) {
             child->Update(deltaTime);
         }
@@ -154,11 +154,11 @@ namespace Reality {
     // Template implementations
     template<typename T>
     T* BaseGameObject::AddComponent() {
-        static_assert(std::is_base_of<BaseComponent, T>::value,
+        static_assert(std::is_base_of_v<BaseComponent, T>,
                      "T must inherit from BaseComponent");
 
         // Special handling for TransformComponent
-        if (std::is_same<T, TransformComponent>::value && m_transform != nullptr) {
+        if (std::is_same_v<T, TransformComponent> && m_transform != nullptr) {
             return m_transform;
         }
 
@@ -171,7 +171,7 @@ namespace Reality {
         m_components[type].push_back(component);
 
         // If it's a TransformComponent, store the reference
-        if (std::is_same<T, TransformComponent>::value) {
+        if (std::is_same_v<T, TransformComponent>) {
             m_transform = static_cast<TransformComponent*>(component);
         }
 
@@ -185,11 +185,11 @@ namespace Reality {
 
     template<typename T>
     T* BaseGameObject::GetComponent() const {
-        static_assert(std::is_base_of<BaseComponent, T>::value,
+        static_assert(std::is_base_of_v<BaseComponent, T>,
                      "T must inherit from BaseComponent");
 
         // Special handling for TransformComponent
-        if (std::is_same<T, TransformComponent>::value) {
+        if (std::is_same_v<T, TransformComponent>) {
             return m_transform;
         }
 
@@ -208,7 +208,7 @@ namespace Reality {
 
     template<typename T>
     std::vector<T*> BaseGameObject::GetComponents() const {
-        static_assert(std::is_base_of<BaseComponent, T>::value,
+        static_assert(std::is_base_of_v<BaseComponent, T>,
                      "T must inherit from BaseComponent");
 
         std::vector<T*> result;
@@ -227,11 +227,11 @@ namespace Reality {
 
     template<typename T>
     bool BaseGameObject::HasComponent() const {
-        static_assert(std::is_base_of<BaseComponent, T>::value,
+        static_assert(std::is_base_of_v<BaseComponent, T>,
                      "T must inherit from BaseComponent");
 
         // Special handling for TransformComponent
-        if (std::is_same<T, TransformComponent>::value) {
+        if (std::is_same_v<T, TransformComponent>) {
             return m_transform != nullptr;
         }
 
@@ -242,11 +242,11 @@ namespace Reality {
 
     template<typename T>
     void BaseGameObject::RemoveComponent() {
-        static_assert(std::is_base_of<BaseComponent, T>::value,
+        static_assert(std::is_base_of_v<BaseComponent, T>,
                      "T must inherit from BaseComponent");
 
         // Cannot remove TransformComponent
-        if (std::is_same<T, TransformComponent>::value) {
+        if (std::is_same_v<T, TransformComponent>) {
             return;
         }
 
