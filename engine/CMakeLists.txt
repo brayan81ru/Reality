@@ -2,8 +2,8 @@
 
 add_library(Engine STATIC
         src/core/TransformComponent.cpp
+        src/core/BaseComponent.h
         src/core/BaseGameObject.cpp
-        src/core/BaseComponent.cpp
         src/core/MathF.h
         src/core/Camera.cpp
         src/core/Config.h

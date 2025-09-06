@@ -1,30 +1,79 @@
 ﻿#pragma once
-#include <string>
 #include <vector>
-
+#include <memory>
+#include <unordered_map>
+#include <typeindex>
+#include <algorithm>
 #include "BaseComponent.h"
 
-
 namespace Reality {
-    class BaseGameObject abstract{
-        public:
+    // Forward declarations
+    class TransformComponent;
+
+    class BaseGameObject {
+    public:
         BaseGameObject();
-        virtual ~BaseGameObject() = default;
+        virtual ~BaseGameObject();
 
-        virtual void Destroy();
+        // Lifecycle
+        virtual void Start();
+        virtual void Update(float deltaTime);
+        virtual void OnDestroy();
 
-        void SetName(const std::string &_name){  m_Name = _name;}
+        // Name management
+        void SetName(const std::string& name) { m_name = name; }
+        const std::string& GetName() const { return m_name; }
 
-        std::string GetName(){ return m_Name; }
+        // Component management
+        template<typename T>
+        T* AddComponent();
 
-        void AddComponent(const BaseComponent* _component);
+        template<typename T>
+        T* GetComponent() const;
 
-        private:
+        template<typename T>
+        std::vector<T*> GetComponents() const;
 
-        std::vector<BaseComponent> m_components;
+        template<typename T>
+        bool HasComponent() const;
 
-        int id = 0;
+        template<typename T>
+        void RemoveComponent();
 
-        std::string m_Name;
+        // Special access to Transform
+        TransformComponent* GetTransform() const { return m_transform; }
+
+        // Hierarchy
+        void SetParent(BaseGameObject* parent);
+        BaseGameObject* GetParent() const { return m_parent; }
+        const std::vector<BaseGameObject*>& GetChildren() const { return m_children; }
+
+        // Active state
+        void SetActive(bool active);
+        bool IsActive() const { return m_active; }
+        bool IsActiveInHierarchy() const;
+
+        // Tag and Layer (Unity-like)
+        void SetTag(const std::string& tag) { m_tag = tag; }
+        const std::string& GetTag() const { return m_tag; }
+
+        void SetLayer(int layer) { m_layer = layer; }
+        int GetLayer() const { return m_layer; }
+
+    private:
+        std::unordered_map<std::type_index, std::vector<BaseComponent*>> m_components;
+        std::vector<BaseGameObject*> m_children;
+        BaseGameObject* m_parent;
+        TransformComponent* m_transform;
+        std::string m_name;
+        std::string m_tag;
+        int m_layer;
+        bool m_active;
+        bool m_started;
+
+        // Internal methods
+        void AddChild(BaseGameObject* child);
+        void RemoveChild(BaseGameObject* child);
+        void UpdateChildren(float deltaTime);
     };
 }
