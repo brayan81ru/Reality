@@ -46,7 +46,7 @@ namespace Reality {
 #endif
     }
 
-    void DisplayManager::Shutdown() {
+    void DisplayManager::Shutdown() const {
 #ifdef _WIN32
         if (m_dxgiFactory) {
             m_dxgiFactory->Release();
@@ -92,7 +92,7 @@ namespace Reality {
     }
 #endif
 
-    std::vector<DisplayResolution> DisplayManager::GetAvailableResolutions() const {
+    std::vector<DisplayResolution> DisplayManager::GetAvailableResolutions() {
         std::vector<DisplayResolution> resolutions;
 
 #ifdef _WIN32

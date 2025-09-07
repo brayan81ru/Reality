@@ -44,7 +44,7 @@ namespace Reality {
         ~DisplayManager();
 
         // Get all available display resolutions
-        std::vector<DisplayResolution> GetAvailableResolutions() const;
+        static std::vector<DisplayResolution> GetAvailableResolutions();
 
         // Get current display information
         DisplayInfo GetCurrentDisplayInfo() const;
@@ -63,8 +63,8 @@ namespace Reality {
 
     private:
         // Platform-specific implementations
-        void Initialize();
-        void Shutdown();
+        static void Initialize();
+        void Shutdown() const;
 
         // Platform-specific pixel format detection
         PixelFormat DetectPixelFormat() const;

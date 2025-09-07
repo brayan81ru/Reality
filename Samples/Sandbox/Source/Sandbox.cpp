@@ -63,6 +63,32 @@ int main() {
         RLOG_ERROR("Failed to load configuration");
     }
 
+    const Reality::DisplayManager displayManager;
+
+    // Get current display information
+    const DisplayInfo currentInfo = displayManager.GetCurrentDisplayInfo();
+    std::cout << "Current Resolution: " << currentInfo.width << "x" << currentInfo.height
+              << " @ " << currentInfo.refreshRate << "Hz" << std::endl;
+    std::cout << "HDR Support: " << (currentInfo.isHDRSupported ? "Yes" : "No") << std::endl;
+    std::cout << "Pixel Format: " << Reality::DisplayManager::PixelFormatToString(currentInfo.pixelFormat) << std::endl;
+    std::cout << "Color Depth: " << currentInfo.colorDepth << " bits" << std::endl;
+
+    if (currentInfo.isHDRSupported) {
+        std::cout << "Max Luminance: " << currentInfo.maxLuminance << " nits" << std::endl;
+        std::cout << "Min Luminance: " << currentInfo.minLuminance << " nits" << std::endl;
+        std::cout << "Max Full Frame Luminance: " << currentInfo.maxFullFrameLuminance << " nits" << std::endl;
+    }
+
+    // Get available resolutions
+    /*
+    const std::vector<Reality::DisplayResolution> resolutions = displayManager.GetAvailableResolutions();
+    std::cout << "\nAvailable Resolutions:" << std::endl;
+    for (const auto& res : resolutions) {
+        std::cout << res.width << "x" << res.height << " @ " << res.refreshRate << "Hz" << std::endl;
+    }
+    */
+
+
     // Initialize application.
     const auto Application = new RealityApplication();
     Application->Initialize("Reality Engine - Sandbox",1920,1080);
