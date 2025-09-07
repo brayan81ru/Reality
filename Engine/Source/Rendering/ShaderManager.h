@@ -58,7 +58,7 @@ namespace Reality {
         ~ShaderManager() = default;
 
         // Helper to convert defines to ShaderMacroArray
-        Diligent::ShaderMacroArray ConvertToMacroArray(
+        static Diligent::ShaderMacroArray ConvertToMacroArray(
             const std::vector<std::pair<std::string, std::string>>& defines
         );
 

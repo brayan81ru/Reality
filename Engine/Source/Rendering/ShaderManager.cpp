@@ -10,65 +10,65 @@ namespace Reality {
     }
 
     // Helper function to convert our ShaderType to Diligent's SHADER_TYPE
-    Diligent::SHADER_TYPE ConvertShaderType(ShaderManager::ShaderType type) {
+    SHADER_TYPE ConvertShaderType(ShaderManager::ShaderType type) {
         switch (type) {
             case ShaderManager::ShaderType::VERTEX:
-                return Diligent::SHADER_TYPE_VERTEX;
+                return SHADER_TYPE_VERTEX;
             case ShaderManager::ShaderType::PIXEL:
-                return Diligent::SHADER_TYPE_PIXEL;
+                return SHADER_TYPE_PIXEL;
             case ShaderManager::ShaderType::GEOMETRY:
-                return Diligent::SHADER_TYPE_GEOMETRY;
+                return SHADER_TYPE_GEOMETRY;
             case ShaderManager::ShaderType::COMPUTE:
-                return Diligent::SHADER_TYPE_COMPUTE;
+                return SHADER_TYPE_COMPUTE;
             case ShaderManager::ShaderType::RAYGEN:
-                return Diligent::SHADER_TYPE_RAY_GEN;
+                return SHADER_TYPE_RAY_GEN;
             case ShaderManager::ShaderType::MISS:
-                return Diligent::SHADER_TYPE_RAY_MISS;
+                return SHADER_TYPE_RAY_MISS;
             case ShaderManager::ShaderType::CLOSEST_HIT:
-                return Diligent::SHADER_TYPE_RAY_CLOSEST_HIT;
+                return SHADER_TYPE_RAY_CLOSEST_HIT;
             case ShaderManager::ShaderType::ANY_HIT:
-                return Diligent::SHADER_TYPE_RAY_ANY_HIT;
+                return SHADER_TYPE_RAY_ANY_HIT;
             default:
-                return Diligent::SHADER_TYPE_UNKNOWN;
+                return SHADER_TYPE_UNKNOWN;
         }
     }
 
-    Diligent::ShaderMacroArray ShaderManager::ConvertToMacroArray(
+    ShaderMacroArray ShaderManager::ConvertToMacroArray(
         const std::vector<std::pair<std::string, std::string>>& defines
     ) {
         if (defines.empty()) {
             // Return empty array
-            return Diligent::ShaderMacroArray();
+            return {};
         }
 
         // Convert to ShaderMacro array
-        std::vector<Diligent::ShaderMacro> macros;
+        std::vector<ShaderMacro> macros;
         for (const auto& define : defines) {
-            macros.push_back({define.first.c_str(), define.second.c_str()});
+            macros.emplace_back(define.first.c_str(), define.second.c_str());
         }
 
-        return Diligent::ShaderMacroArray(macros.data(), macros.size());
+        return {macros.data(), static_cast<Uint32>(macros.size())};
     }
 
-    Diligent::IShader* ShaderManager::LoadShader(
+    IShader* ShaderManager::LoadShader(
         const std::string& name,
         const std::string& filePath,
         ShaderType type,
         const std::vector<ShaderPermutation>& permutations
     ) {
-        if (m_shaders.find(name) != m_shaders.end()) {
+        if (m_shaders.contains(name)) {
             RLOG_WARNING("Shader '%s' already loaded. Returning existing shader.", name.c_str());
             return m_shaders[name];
         }
 
-        Diligent::ShaderCreateInfo shaderCI;
-        shaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+        ShaderCreateInfo shaderCI;
+        shaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL;
         shaderCI.Desc.UseCombinedTextureSamplers = true;
-        shaderCI.CompileFlags = Diligent::SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
+        shaderCI.CompileFlags = SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
         shaderCI.FilePath = filePath.c_str();
 
         // Explicitly set Macros to empty array to avoid default argument issue
-        shaderCI.Macros = Diligent::ShaderMacroArray();
+        shaderCI.Macros = ShaderMacroArray();
 
         // Set shader type
         shaderCI.Desc.ShaderType = ConvertShaderType(type);
@@ -76,8 +76,8 @@ namespace Reality {
         shaderCI.EntryPoint = "main";
         shaderCI.Desc.Name = name.c_str();
 
-        Diligent::RefCntAutoPtr<Diligent::IShader> shader;
-        auto& renderer = Renderer::GetInstance();
+        RefCntAutoPtr<IShader> shader;
+        const auto& renderer = Renderer::GetInstance();
         renderer.GetDevice()->CreateShader(shaderCI, &shader);
 
         if (!shader) {
@@ -99,8 +99,8 @@ namespace Reality {
         return shader;
     }
 
-    Diligent::IShader* ShaderManager::GetShader(const std::string& name) {
-        auto it = m_shaders.find(name);
+    IShader* ShaderManager::GetShader(const std::string& name) {
+        const auto it = m_shaders.find(name);
         if (it != m_shaders.end()) {
             return it->second;
         }
@@ -109,7 +109,7 @@ namespace Reality {
     }
 
     bool ShaderManager::ReloadShader(const std::string& name) {
-        auto it = m_shaders.find(name);
+        const auto it = m_shaders.find(name);
         if (it == m_shaders.end()) {
             RLOG_ERROR("Cannot reload shader '%s': not found", name.c_str());
             return false;
@@ -119,32 +119,32 @@ namespace Reality {
         m_shaders.erase(it);
 
         // Reload with the same parameters
-        Diligent::IShader* newShader = LoadShader(name,
+        const IShader* newShader = LoadShader(name,
                                                    m_shaderPaths[name],
                                                    m_shaderTypes[name]);
 
         return newShader != nullptr;
     }
 
-    Diligent::IShader* ShaderManager::CreateShaderPermutation(
+    IShader* ShaderManager::CreateShaderPermutation(
         const std::string& baseName,
         const std::string& permutationName,
         const std::vector<std::pair<std::string, std::string>>& defines
     ) {
-        std::string fullName = baseName + "_" + permutationName;
+        const std::string fullName = baseName + "_" + permutationName;
 
-        if (m_shaders.find(fullName) != m_shaders.end()) {
+        if (m_shaders.contains(fullName)) {
             RLOG_WARNING("Shader permutation '%s' already exists", fullName.c_str());
             return m_shaders[fullName];
         }
 
         // Create shader macros
-        Diligent::ShaderMacroArray macros = ConvertToMacroArray(defines);
+        const ShaderMacroArray macros = ConvertToMacroArray(defines);
 
-        Diligent::ShaderCreateInfo shaderCI;
-        shaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+        ShaderCreateInfo shaderCI;
+        shaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL;
         shaderCI.Desc.UseCombinedTextureSamplers = true;
-        shaderCI.CompileFlags = Diligent::SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
+        shaderCI.CompileFlags = SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
         shaderCI.FilePath = m_shaderPaths[baseName].c_str();
         shaderCI.Macros = macros;
 
@@ -154,8 +154,8 @@ namespace Reality {
         shaderCI.EntryPoint = "main";
         shaderCI.Desc.Name = fullName.c_str();
 
-        Diligent::RefCntAutoPtr<Diligent::IShader> shader;
-        auto& renderer = Renderer::GetInstance();
+        RefCntAutoPtr<IShader> shader;
+        const auto& renderer = Renderer::GetInstance();
         renderer.GetDevice()->CreateShader(shaderCI, &shader);
 
         if (!shader) {
