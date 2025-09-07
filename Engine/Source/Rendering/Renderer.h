@@ -5,6 +5,7 @@
 #include <Rendering/ImguiBackend.h>
 #include <Rendering/DisplayManager.h>
 #include "BasicMath.hpp"
+using namespace Diligent;
 
 namespace Reality {
     struct RenderAPI {

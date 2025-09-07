@@ -2,7 +2,7 @@
 #include <vector>
 #include <SDL.h>
 #include <string>
-#include <Platform/Window.h>
+
 
 namespace Reality {
 
@@ -58,6 +58,8 @@ namespace Reality {
             return (index < Count) ? names[index] : "Unknown";
         }
     };
+
+    class Window;
 
     class DisplayManager {
     public:

@@ -5,8 +5,9 @@
 #include <EngineFactoryOpenGL.h>
 #include <EngineFactoryVk.h>
 #include <RefCntAutoPtr.hpp>
+#include <GraphicsTypes.h>
 #include <imgui.h>
-
+#include <Platform/Window.h>
 #include "Core/Log.h"
 
 namespace Reality {

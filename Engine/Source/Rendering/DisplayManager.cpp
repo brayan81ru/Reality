@@ -1,5 +1,6 @@
 ﻿#include "DisplayManager.h"
 #include <stdexcept>
+#include <Platform/Window.h>
 
 namespace Reality {
     // Initialize the static member
@@ -34,6 +35,7 @@ namespace Reality {
 
     DisplayMode DisplayManager::GetCurrentMode(int displayIndex) {
         SDL_DisplayMode mode;
+
         if (SDL_GetCurrentDisplayMode(displayIndex, &mode)) {
             throw std::runtime_error(SDL_GetError());
         }

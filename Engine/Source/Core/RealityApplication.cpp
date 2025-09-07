@@ -1,7 +1,10 @@
 ﻿#include "RealityApplication.h"
 #include <Rendering/Renderer.h>
+#include <Rendering/DisplayManager.h>
 #include <Platform/Window.h>
 #include <Core/Timer.h>
+
+#include "Log.h"
 
 namespace Reality {
     bool RealityApplication::IsRunning() const {
@@ -10,8 +13,17 @@ namespace Reality {
 
     void RealityApplication::Initialize(const std::string &title, const int width, const int height) {
         Timer::Init();
+
         m_window = new Window(title, width, height);
+
+        const auto currentMode = DisplayManager::GetCurrentMode();
+        RLOG_INFO("Pixel format %s",SDL_GetPixelFormatName(currentMode.format));
+        /*
+        DisplayManager::ApplyDisplayMode(m_window,currentMode,FullScreenMode::ExclusiveFullScreen);
+        */
+
         m_renderer = &Renderer::GetInstance();
+
         m_renderer->Initialize(RenderAPI::Direct3D12, m_window);
     }
 
