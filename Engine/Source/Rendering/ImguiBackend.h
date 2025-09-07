@@ -3,8 +3,6 @@
 #include <ImGuiImplDiligent.hpp>
 #include <SwapChain.h>
 
-#include "SDL_events.h"
-
 namespace Reality {
 
     class ImguiBackend {
@@ -25,7 +23,7 @@ namespace Reality {
 
         void Shutdown();
 
-        void ProcessSDLEvent(const SDL_Event *event) const;
+        //-void ProcessSDLEvent(const SDL_Event *event) const;
 
     private:
         std::unique_ptr<Diligent::ImGuiImplDiligent> m_ImGuiImpl;

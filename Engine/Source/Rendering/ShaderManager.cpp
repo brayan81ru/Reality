@@ -50,54 +50,67 @@ namespace Reality {
         return {macros.data(), static_cast<Uint32>(macros.size())};
     }
 
-    IShader* ShaderManager::LoadShader(
-        const std::string& name,
-        const std::string& filePath,
-        ShaderType type,
-        const std::vector<ShaderPermutation>& permutations
-    ) {
-        if (m_shaders.contains(name)) {
-            RLOG_WARNING("Shader '%s' already loaded. Returning existing shader.", name.c_str());
-            return m_shaders[name];
+    // Add this helper function to read shader files (similar to your Shader class)
+    std::string ReadShaderFileAndRemoveBOM(const std::string& filePath) {
+        std::ifstream file(filePath, std::ios::binary);
+        if (!file.is_open()) {
+            throw std::runtime_error("Failed to open shader file: " + filePath);
         }
 
-        ShaderCreateInfo shaderCI;
-        shaderCI.SourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL;
-        shaderCI.Desc.UseCombinedTextureSamplers = true;
-        shaderCI.CompileFlags = SHADER_COMPILE_FLAG_PACK_MATRIX_ROW_MAJOR;
-        shaderCI.FilePath = filePath.c_str();
+        // Read the entire file
+        file.seekg(0, std::ios::end);
+        size_t fileSize = file.tellg();
+        file.seekg(0, std::ios::beg);
 
-        // Explicitly set Macros to empty array to avoid default argument issue
-        shaderCI.Macros = ShaderMacroArray();
+        std::vector<char> buffer(fileSize + 1);
+        file.read(buffer.data(), fileSize);
+        buffer[fileSize] = '\0';
 
-        // Set shader type
-        shaderCI.Desc.ShaderType = ConvertShaderType(type);
+        // Check for UTF-8 BOM
+        if (fileSize >= 3 &&
+            static_cast<unsigned char>(buffer[0]) == 0xEF &&
+            static_cast<unsigned char>(buffer[1]) == 0xBB &&
+            static_cast<unsigned char>(buffer[2]) == 0xBF) {
+            return std::string(buffer.data() + 3);
+            }
 
-        shaderCI.EntryPoint = "main";
-        shaderCI.Desc.Name = name.c_str();
-
-        RefCntAutoPtr<IShader> shader;
-        const auto& renderer = Renderer::GetInstance();
-        renderer.GetDevice()->CreateShader(shaderCI, &shader);
-
-        if (!shader) {
-            RLOG_ERROR("Failed to load shader '%s' from '%s'", name.c_str(), filePath.c_str());
-            return nullptr;
-        }
-
-        m_shaders[name] = shader;
-        m_shaderPaths[name] = filePath;
-        m_shaderTypes[name] = type;
-
-        RLOG_INFO("Loaded shader '%s' from '%s'", name.c_str(), filePath.c_str());
-
-        // Create permutations if specified
-        for (const auto& permutation : permutations) {
-            CreateShaderPermutation(name, permutation.name, permutation.defines);
-        }
-
-        return shader;
+        return std::string(buffer.data());
     }
+
+    void ShaderManager::LoadShader(const std::string& name, const std::string& path, ShaderType type) {
+        try {
+            // Read the shader file manually (like your Shader class does)
+            const std::string shaderSource = ReadShaderFileAndRemoveBOM(path);
+
+            // Create shader info
+            Diligent::ShaderCreateInfo ShaderCI;
+            ShaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+            ShaderCI.Desc.UseCombinedTextureSamplers = true;
+
+            // Set the shader source directly instead of using FilePath
+            ShaderCI.Source = shaderSource.c_str();
+
+            // Set shader type and entry point
+            switch (type) {
+                case ShaderType::VERTEX:
+                    ShaderCI.Desc.ShaderType = Diligent::SHADER_TYPE_VERTEX;
+                    break;
+                case ShaderType::PIXEL:
+                    ShaderCI.Desc.ShaderType = Diligent::SHADER_TYPE_PIXEL;
+                    break;
+                    // Add other shader types as needed
+            }
+            ShaderCI.EntryPoint = "main";
+
+            // Create the shader
+            Renderer::GetInstance().GetDevice()->CreateShader(ShaderCI, &m_shaders[name]);
+
+        } catch (const std::exception& e) {
+            // Handle error (log it, throw, etc.)
+            printf("Error loading shader %s: %s\n", name.c_str(), e.what());
+        }
+    }
+
 
     IShader* ShaderManager::GetShader(const std::string& name) {
         const auto it = m_shaders.find(name);
@@ -109,6 +122,7 @@ namespace Reality {
     }
 
     bool ShaderManager::ReloadShader(const std::string& name) {
+        /*
         const auto it = m_shaders.find(name);
         if (it == m_shaders.end()) {
             RLOG_ERROR("Cannot reload shader '%s': not found", name.c_str());
@@ -120,10 +134,12 @@ namespace Reality {
 
         // Reload with the same parameters
         const IShader* newShader = LoadShader(name,
-                                                   m_shaderPaths[name],
-                                                   m_shaderTypes[name]);
+                                              m_shaderPaths[name],
+                                              m_shaderTypes[name]);
 
         return newShader != nullptr;
+        */
+        return true;
     }
 
     IShader* ShaderManager::CreateShaderPermutation(

@@ -1,5 +1,4 @@
 ﻿#include "Renderer.h"
-#include <SDL.h>
 #include <EngineFactoryD3D11.h>
 #include <EngineFactoryD3D12.h>
 #include <EngineFactoryOpenGL.h>
@@ -7,30 +6,20 @@
 #include <RefCntAutoPtr.hpp>
 #include <GraphicsTypes.h>
 #include <imgui.h>
-#include <Platform/Window.h>
 #include "Core/Log.h"
+#include "Platform/RealityWindow.h"
 
 namespace Reality {
-
     Renderer & Renderer::GetInstance() {
         static Renderer instance;
         return instance;
     }
 
-    void Renderer::Initialize(const RenderAPI RenderApi, Window *Window) {
+    void Renderer::Initialize(const RenderAPI RenderApi, const Reality::RealityWindow *Window) {
         RLOG_INFO("Initializing renderer...");
 
-        // Store the original windows.
-        m_RealityWindow = Window;
-        m_RealityWindow->SetRenderer(this);
+        m_Window.hWnd = Window->GetNativeHandle();
 
-        // get the sdlWindows from the Reality Windows.
-        const auto sdlWindow = m_RealityWindow->GetNativeWindow();
-
-        // Get the diligent compatible window.
-        m_Window = Window::SDLWindowToNativeWindow(sdlWindow);
-
-        // Store the render api.
         m_RenderAPI = RenderApi;
 
         switch (m_RenderAPI) {
@@ -72,9 +61,11 @@ namespace Reality {
         m_ImguiBackend->EndFrame(m_pImmediateContext);
     }
 
+    /*
     void Renderer::ProcessStatsUIEvents(const SDL_Event *event) const {
         m_ImguiBackend->ProcessSDLEvent(event);
     }
+    */
 
     void Renderer::Clear() const {
 
@@ -151,10 +142,8 @@ namespace Reality {
         RLOG_INFO("OpenGL RHI initialized successfully");
     }
 
-    void Renderer::RecreateSwapChain() {
-        // Get current window dimensions
-        uint32_t newWidth, newHeight;
-        GetWindowSize(&newWidth, &newHeight);
+    void Renderer::WindowResize(const int newWidth, const int newHeight) {
+
 
         // Only recreate if dimensions changed
         if (m_pSwapChain && (newWidth == SCDesc.Width && newHeight == SCDesc.Height)) {
@@ -170,15 +159,4 @@ namespace Reality {
             m_pSwapChain->Resize(newWidth, newHeight);
         }
     }
-
-    void Renderer::GetWindowSize(uint32_t *width, uint32_t *height) const {
-        // get the sdlWindows from the Reality Windows.
-        const auto sdlWindow = m_RealityWindow->GetNativeWindow();
-        int w, h;
-        SDL_GetWindowSize(sdlWindow, &w, &h);
-        *width = static_cast<uint32_t>(w);
-        *height = static_cast<uint32_t>(h);
-    }
-
-
 }

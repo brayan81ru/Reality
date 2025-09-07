@@ -14,28 +14,22 @@ add_library(Engine STATIC
         Source/Core/RealityApplication.cpp
         Source/Core/Timer.cpp
         Source/Rendering/ImguiBackend.cpp
-        Source/Rendering/DisplayManager.cpp
+        Source/Platform/DisplayManager.cpp
         Source/Rendering/Renderer.cpp
-        Source/Platform/Window.cpp
         Source/Rendering/ShaderManager.cpp
         Source/Rendering/Texture.cpp
         Source/Rendering/Material.cpp
+        Source/Platform/RealityWindow.cpp
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
-
-target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/SDL2)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/DiligentEngine)
 
-find_package(SDL2 REQUIRED)
-
 # 4. Diligent Engine libraries.
 target_link_libraries(Engine PUBLIC
-        SDL2::SDL2
-        SDL2::SDL2main
         Diligent-Common
         Diligent-Imgui
         Diligent-ShaderTools

@@ -2,15 +2,16 @@
 #include <string>
 
 namespace Reality {
+    class RealityWindow;
     class Renderer;
     class Window;
     class string;
-    class DisplayManager;
+    class DisplayInfo;
 
     class RealityApplication {
-        Window* m_window;
+        RealityWindow* m_NativeWindow;
         Renderer* m_renderer;
-        DisplayManager* m_displayManager;
+        DisplayInfo* m_displayManager;
     public:
         [[nodiscard]] bool IsRunning() const;
 
@@ -26,9 +27,8 @@ namespace Reality {
 
         [[nodiscard]] Renderer* GetRenderer() const {return m_renderer;}
 
-        [[nodiscard]] Window* GetWindow() const {return m_window;}
+        [[nodiscard]] RealityWindow* GetWindow() const {return m_NativeWindow;}
     };
-
 }
 
 

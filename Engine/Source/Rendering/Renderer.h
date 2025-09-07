@@ -3,8 +3,8 @@
 #include <RefCntAutoPtr.hpp>
 #include <RenderDevice.h>
 #include <Rendering/ImguiBackend.h>
-#include <Rendering/DisplayManager.h>
 #include "BasicMath.hpp"
+#include "Platform/RealityWindow.h"
 using namespace Diligent;
 
 namespace Reality {
@@ -28,7 +28,7 @@ namespace Reality {
         explicit operator bool() = delete;
 
         // String conversion
-        const char* ToString() const {
+        [[nodiscard]] const char* ToString() const {
             static const char* names[] = {
                 "OpenGL",
                 "Direct3D11",
@@ -56,7 +56,9 @@ namespace Reality {
 
         static Renderer& GetInstance();
 
-        void Initialize(RenderAPI RenderApi, Window* Window);
+        void Initialize(RenderAPI RenderApi, const Reality::RealityWindow *Window);
+
+
 
         Renderer() = default;
 
@@ -64,7 +66,7 @@ namespace Reality {
 
         void RenderStatsUI(float fps, float frameTime, bool vSync) const;
 
-        void ProcessStatsUIEvents(const SDL_Event *event) const;
+        //void ProcessStatsUIEvents(const SDL_Event *event) const;
 
         void Clear() const;
 
@@ -74,7 +76,7 @@ namespace Reality {
 
         [[nodiscard]] bool GetVSync() const { return m_Vsync;}
 
-        void RecreateSwapChain();
+        void WindowResize(int newWidth, int newHeight);
 
         [[nodiscard]] RefCntAutoPtr<IRenderDevice> GetDevice() const { return m_pDevice;}
         [[nodiscard]] RefCntAutoPtr<IDeviceContext> GetContext() const { return m_pImmediateContext;}
@@ -82,14 +84,12 @@ namespace Reality {
         [[nodiscard]] IEngineFactory* GetEngineFactory() const { return m_pEngineFactory; };
         [[nodiscard]] RefCntAutoPtr<IPipelineState> GetPSO() const { return m_pPSO; };
         [[nodiscard]] Matrix4x4<float> GetWorldProjectionMatrix() const { return m_WorldViewProjMatrix; }
-        void GetWindowSize(uint32_t *width, uint32_t *height) const;
 
         void SetWorldProjectionMatrix(const Matrix4x4<float> &WorldViewProjMatrix) { m_WorldViewProjMatrix = WorldViewProjMatrix; }
 
     private:
         bool m_Vsync = true;
-        Window* m_RealityWindow{};
-        NativeWindow m_Window;
+        Diligent::NativeWindow m_Window;
         RenderAPI m_RenderAPI = RenderAPI::OpenGL;
         SwapChainDesc SCDesc;
         RefCntAutoPtr<IRenderDevice>  m_pDevice;

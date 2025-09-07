@@ -2,9 +2,8 @@
 
 #include <Core/Config.h>
 #include <Core/Log.h>
-#include <Platform/Window.h>
 #include <Rendering/ImguiBackend.h>
-#include <Rendering/DisplayManager.h>
+#include <Platform/DisplayManager.h>
 #include <Rendering/Renderer.h>
 #include <Core/Timer.h>
 #include <Rendering/ShaderManager.h>
@@ -18,7 +17,12 @@
 #include <Components/TransformComponent.h>
 #include "Core/Scene.h"
 
+#include "Platform/RealityWindow.h"
+
+
 using namespace Diligent;
+
+using Reality::RealityWindow;
 
 using Reality::Log;
 
@@ -32,7 +36,7 @@ using Reality::ImguiBackend;
 
 using Reality::Timer;
 
-using Reality::DisplayManager;
+using Reality::DisplayInfo;
 
 using Reality::ShaderManager;
 

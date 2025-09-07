@@ -1,7 +1,6 @@
 ﻿#include "ImguiBackend.h"
 #include "imgui.h"
 #include "ImGuiUtils.hpp"
-#include "SDL_events.h"
 #include "Core/Log.h"
 
 namespace Reality {
@@ -100,6 +99,7 @@ namespace Reality {
     }
 
 
+    /*
     void ImguiBackend::ProcessSDLEvent(const SDL_Event* event) const {
         if (!m_Initialized) return;
 
@@ -137,6 +137,7 @@ namespace Reality {
             default: break;
         }
     }
+    */
 
     void ImguiBackend::Shutdown() {
         if (!m_Initialized) return;

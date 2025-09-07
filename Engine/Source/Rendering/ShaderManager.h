@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <vector>
 #include "RefCntAutoPtr.hpp"
-#include "Shader.h"
+#include "Shader.h"// Add this include
 
 namespace Diligent {
     struct IShader;
@@ -33,11 +33,10 @@ namespace Reality {
         };
 
         // Load shader from file
-        Diligent::IShader* LoadShader(
-            const std::string& name,
-            const std::string& filePath,
-            ShaderType type,
-            const std::vector<ShaderPermutation>& permutations = {}
+        void LoadShader(
+            const std::string &name,
+            const std::string &path,
+            ShaderType type
         );
 
         // Get shader by name
