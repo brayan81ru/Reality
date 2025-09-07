@@ -7,9 +7,10 @@
 #include <Rendering/DisplayManager.h>
 #include <Rendering/Renderer.h>
 #include <Core/Timer.h>
-#include <Core/Shader.h>
+#include <Rendering/ShaderManager.h>
+#include <Rendering/Texture.h>
 #include <Core/RealityApplication.h>
-#include <Core/PrimitiveRenderer.h>
+#include <Rendering/PrimitiveRenderer.h>
 #include <Core/Camera.h>
 #include <Core/MathF.h>
 #include <Core/BaseComponent.h>
@@ -33,7 +34,7 @@ using Reality::Timer;
 
 using Reality::DisplayManager;
 
-using Reality::Shader;
+using Reality::ShaderManager;
 
 using Reality::RealityApplication;
 
@@ -50,6 +51,8 @@ using Reality::TransformComponent;
 using Reality::Scene;
 
 using Reality::TransformComponent;
+
+using Reality::Texture;
 
 using namespace Reality::MathF;
 

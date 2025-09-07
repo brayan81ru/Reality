@@ -67,6 +67,8 @@ int main() {
     const auto Application = new RealityApplication();
     Application->Initialize("Reality Engine - Sandbox",1920,1080);
 
+
+
     // Create a primitive renderer.
     const auto primitiveRenderer = new PrimitiveRenderer();
 
@@ -86,6 +88,8 @@ int main() {
     gameObject->SetName("TestGameObject1");
 
     mainScene->Initialize();
+
+
 
     while (Application->IsRunning()) {
         Application->Update();

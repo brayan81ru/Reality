@@ -10,19 +10,23 @@ add_library(Engine STATIC
         Source/Core/Config.h
         Source/Reality.h
         Source/Core/Log.cpp
-        Source/Core/PrimitiveRenderer.cpp
+        Source/Rendering/PrimitiveRenderer.cpp
         Source/Core/RealityApplication.cpp
         Source/Core/Timer.cpp
-        Source/Core/Shader.cpp
         Source/Rendering/ImguiBackend.cpp
         Source/Rendering/DisplayManager.cpp
         Source/Rendering/Renderer.cpp
         Source/Platform/Window.cpp
+        Source/Rendering/ShaderManager.cpp
+        Source/Rendering/Texture.cpp
+        Source/Rendering/Material.cpp
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/SDL2)
+
+target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/stb)
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/DiligentEngine)
 
