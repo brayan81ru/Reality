@@ -16,18 +16,8 @@
 #include <Core/BaseGameObject.h>
 #include <Components/TransformComponent.h>
 #include "Core/Scene.h"
-#include "RenderingBackend/GraphicsTypes.h"
-#include "RenderingBackend/GraphicsDevice.h"
-#include "RenderingBackend/Resource.h"
 #include "Platform/RealityWindow.h"
-#include "RenderingBackend/CommandList.h"
-#include "RenderingBackend/D3D12Buffer.h"
-#include "RenderingBackend/D3D12Texture.h"
-#include "RenderingBackend/D3D12CommandList.h"
-#include "RenderingBackend/D3D12Fence.h"
-#include "RenderingBackend/GraphicsFactory.h"
-#include "RenderingBackend/D3D12Device.h"
-
+#include "RenderingBackend/RAW/DX12Renderer.h"
 
 namespace Reality {
     class GraphicsFactory;
@@ -35,6 +25,8 @@ namespace Reality {
 }
 
 using namespace Diligent;
+
+using Reality::DX12Renderer;
 
 using Reality::RealityWindow;
 
@@ -70,25 +62,11 @@ using Reality::Scene;
 
 using Reality::TransformComponent;
 
-using Reality::IGraphicsDevice;
-
 using Reality::Texture;
 
 using Reality::GraphicsFactory;
 
-using Reality::D3D12Buffer;
-
 using Reality::D3D12Shader;
-
-using Reality::D3D12Texture;
-
-using Reality::D3D12CommandList;
-
-using Reality::D3D12Fence;
-
-using Reality::D3D12Device;
-
-
 
 using namespace Reality::MathF;
 

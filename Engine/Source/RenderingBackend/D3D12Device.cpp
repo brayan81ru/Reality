@@ -240,7 +240,7 @@ namespace Reality {
     
     void D3D12Device::CreateRenderTargetViews() {
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_rtvHeap->GetCPUDescriptorHandleForHeapStart();
-        
+
         for (UINT i = 0; i < 2; i++) {
             Microsoft::WRL::ComPtr<ID3D12Resource> backBuffer;
             HRESULT hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(&backBuffer));
@@ -248,11 +248,11 @@ namespace Reality {
                 std::cerr << "Failed to get back buffer " << i << ": " << hr << std::endl;
                 return;
             }
-            
+
             m_device->CreateRenderTargetView(backBuffer.Get(), nullptr, rtvHandle);
             m_backBuffers.push_back(backBuffer);
             m_rtvHandles.push_back(rtvHandle);
-            
+
             rtvHandle.ptr += m_rtvDescriptorSize;
         }
     }
@@ -303,11 +303,11 @@ namespace Reality {
             dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
             dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
             dsvDesc.Texture2D.MipSlice = 0;
-            
+
             m_device->CreateDepthStencilView(depthBuffer.Get(), &dsvDesc, dsvHandle);
             m_depthBuffers.push_back(depthBuffer);
             m_dsvHandles.push_back(dsvHandle);
-            
+
             dsvHandle.ptr += m_dsvDescriptorSize;
         }
     }
@@ -395,7 +395,7 @@ namespace Reality {
         
         CloseHandle(fenceEvent);
     }
-    
+
     void D3D12Device::Present() {
         HRESULT hr = m_swapChain->Present(1, m_tearingSupported ? DXGI_PRESENT_ALLOW_TEARING : 0);
         if (FAILED(hr)) {
@@ -414,8 +414,9 @@ namespace Reality {
         if (index >= m_backBuffers.size()) {
             return nullptr;
         }
-        
-        return new D3D12Texture(this, m_backBuffers[index].Get(), 
+
+        // Use the new constructor that includes the RTV handle
+        return new D3D12Texture(this, m_backBuffers[index].Get(), m_rtvHandles[index],
                                 D3D12_RESOURCE_STATE_RENDER_TARGET);
     }
 }

@@ -55,7 +55,7 @@ namespace Reality {
         
         IFence* CreateFence() override;
         void WaitForIdle() override;
-        
+
         void Present() override;
         uint32_t GetBackBufferIndex() const override;
         ITexture* GetBackBuffer(uint32_t index) override;

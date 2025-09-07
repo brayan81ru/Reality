@@ -5,6 +5,11 @@
 namespace Reality {
     D3D12Texture::D3D12Texture(D3D12Device* device, const TextureDesc& desc, const void* initialData)
         : TextureBase(desc), m_device(device), m_ownsResource(true) {
+
+        // Initialize handles to null
+        m_rtvHandle.ptr = 0;
+        m_dsvHandle.ptr = 0;
+
         ID3D12Device* d3d12Device = device->GetD3DDevice();
 
         // Create resource description
@@ -85,6 +90,8 @@ namespace Reality {
             // For now, we'll just assert that it's not implemented
             assert(false && "Initial data for textures not implemented yet");
         }
+
+
     }
 
     D3D12Texture::D3D12Texture(D3D12Device* device, ID3D12Resource* resource, D3D12_RESOURCE_STATES state)
@@ -92,11 +99,49 @@ namespace Reality {
         m_resource = resource;
         m_state = state;
 
+        // Initialize handles to null
+        m_rtvHandle.ptr = 0;
+        m_dsvHandle.ptr = 0;
+
         // Fill in texture description from resource
         D3D12_RESOURCE_DESC desc = resource->GetDesc();
         m_desc.width = static_cast<uint32_t>(desc.Width);
         m_desc.height = desc.Height;
         m_desc.depth = desc.DepthOrArraySize;
+        m_desc.mipLevels = desc.MipLevels;
+        m_desc.arraySize = desc.DepthOrArraySize;
+        m_desc.format = static_cast<Format>(desc.Format);
+
+        // Determine resource type
+        switch (desc.Dimension) {
+            case D3D12_RESOURCE_DIMENSION_TEXTURE1D:
+                m_desc.type = ResourceType::Texture1D;
+                break;
+            case D3D12_RESOURCE_DIMENSION_TEXTURE2D:
+                m_desc.type = ResourceType::Texture2D;
+                break;
+            case D3D12_RESOURCE_DIMENSION_TEXTURE3D:
+                m_desc.type = ResourceType::Texture3D;
+                break;
+            default:
+                m_desc.type = ResourceType::Texture2D; // Default
+                break;
+        }
+    }
+
+    // New constructor for back buffer with RTV
+    D3D12Texture::D3D12Texture(D3D12Device* device, ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_RESOURCE_STATES state)
+        : TextureBase(TextureDesc()), m_device(device), m_ownsResource(false) {
+        m_resource = resource;
+        m_state = state;
+        m_rtvHandle = rtvHandle;
+        m_dsvHandle.ptr = 0; // Back buffer typically doesn't have a DSV
+
+        // Fill in texture description from resource
+        D3D12_RESOURCE_DESC desc = resource->GetDesc();
+        m_desc.width = static_cast<uint32_t>(desc.Width);
+        m_desc.height = desc.Height;
+        m_desc.depth = 1;
         m_desc.mipLevels = desc.MipLevels;
         m_desc.arraySize = desc.DepthOrArraySize;
         m_desc.format = static_cast<Format>(desc.Format);

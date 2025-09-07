@@ -14,22 +14,31 @@ namespace Reality {
         D3D12_RESOURCE_STATES m_state;
         D3D12Device* m_device;
         bool m_ownsResource;
-        
+        D3D12_CPU_DESCRIPTOR_HANDLE m_rtvHandle; // Add RTV handle
+        D3D12_CPU_DESCRIPTOR_HANDLE m_dsvHandle; // Add DSV handle
+
     public:
         // Create from description
         D3D12Texture(D3D12Device* device, const TextureDesc& desc, const void* initialData = nullptr);
-        
-        // Create from existing resource
+
+        // Create from existing resource (e.g., swap chain image)
         D3D12Texture(D3D12Device* device, ID3D12Resource* resource, D3D12_RESOURCE_STATES state);
-        
+
+        // Create back buffer with RTV
+        D3D12Texture(D3D12Device* device, ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle, D3D12_RESOURCE_STATES state);
+
         ~D3D12Texture();
-        
+
         // ITexture interface
         void UpdateData(const void* data, uint32_t mipLevel, uint32_t arraySlice) override;
-        
+
         // Helper methods
         ID3D12Resource* GetResource() const { return m_resource.Get(); }
         D3D12_RESOURCE_STATES GetState() const { return m_state; }
         void SetState(D3D12_RESOURCE_STATES state) { m_state = state; }
+        D3D12_CPU_DESCRIPTOR_HANDLE GetRTV() const { return m_rtvHandle; }
+        D3D12_CPU_DESCRIPTOR_HANDLE GetDSV() const { return m_dsvHandle; }
+        void SetRTV(D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle) { m_rtvHandle = rtvHandle; }
+        void SetDSV(D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle) { m_dsvHandle = dsvHandle; }
     };
 }

@@ -27,6 +27,7 @@ namespace Reality {
         void SetIndexBuffer(IBuffer* buffer) override;
         void SetGraphicsRootConstantBufferView(uint32_t rootIndex, IBuffer* buffer) override;
         void SetGraphicsRootDescriptorTable(uint32_t rootIndex, IBuffer* buffer) override;
+        void Draw(uint32_t vertexCount, uint32_t instanceCount = 1) override;
         void DrawIndexed(uint32_t indexCount, uint32_t instanceCount = 1) override;
         void CopyTextureRegion(ITexture* dst, ITexture* src) override;
         void ClearRenderTargetView(ITexture* renderTarget, const float color[4]) override;

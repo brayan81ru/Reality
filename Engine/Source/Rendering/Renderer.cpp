@@ -2,7 +2,7 @@
 #include <EngineFactoryD3D11.h>
 #include <EngineFactoryD3D12.h>
 #include <EngineFactoryOpenGL.h>
-
+#include <EngineFactoryVk.h>
 #include <RefCntAutoPtr.hpp>
 #include <GraphicsTypes.h>
 #include <imgui.h>
@@ -121,7 +121,7 @@ namespace Reality {
     }
 
     void Renderer::InitializeRendererVulkan() {
-        /*
+
         RLOG_INFO("Initializing Vulkan RHI...");
         const Diligent::EngineVkCreateInfo EngineCI;
         auto* pFactoryVk = Diligent::GetEngineFactoryVk();
@@ -130,7 +130,7 @@ namespace Reality {
         pFactoryVk->CreateSwapChainVk(m_pDevice, m_pImmediateContext, SCDesc, Window, &m_pSwapChain);
         m_pEngineFactory = pFactoryVk;
         RLOG_INFO("Vulkan RHI initialized successfully");
-        */
+
     }
 
     void Renderer::InitializeRendererOpenGL() {

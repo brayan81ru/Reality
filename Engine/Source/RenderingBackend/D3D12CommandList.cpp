@@ -4,6 +4,7 @@
 #include "D3D12Buffer.h"
 #include "D3D12PipelineState.h"
 #include <cassert>
+#include <iostream>
 
 namespace Reality {
     D3D12CommandList::D3D12CommandList(D3D12Device* device) : m_device(device) {
@@ -110,6 +111,18 @@ namespace Reality {
         assert(false && "SetGraphicsRootDescriptorTable not implemented yet");
     }
 
+    void D3D12CommandList::Draw(uint32_t vertexCount, uint32_t instanceCount) {
+        assert(!m_isClosed && "Command list is closed");
+
+        // Flush any pending barriers
+        if (!m_barriers.empty()) {
+            m_commandList->ResourceBarrier(static_cast<UINT>(m_barriers.size()), m_barriers.data());
+            m_barriers.clear();
+        }
+
+        m_commandList->DrawInstanced(vertexCount, instanceCount, 0, 0);
+    }
+
     void D3D12CommandList::DrawIndexed(uint32_t indexCount, uint32_t instanceCount) {
         assert(!m_isClosed && "Command list is closed");
 
@@ -135,28 +148,20 @@ namespace Reality {
 
     void D3D12CommandList::ClearRenderTargetView(ITexture* renderTarget, const float color[4]) {
         assert(!m_isClosed && "Command list is closed");
-
         D3D12Texture* d3d12Texture = static_cast<D3D12Texture*>(renderTarget);
 
-        // Get RTV handle
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = {};
-        // This would need to be properly set based on the texture
-        // For now, we'll use a placeholder
-        assert(false && "ClearRenderTargetView not fully implemented yet");
+        // Get RTV handle from the texture
+        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = d3d12Texture->GetRTV();
 
         m_commandList->ClearRenderTargetView(rtvHandle, color, 0, nullptr);
     }
 
     void D3D12CommandList::ClearDepthStencilView(ITexture* depthStencil, float depth, uint8_t stencil) {
         assert(!m_isClosed && "Command list is closed");
-
         D3D12Texture* d3d12Texture = static_cast<D3D12Texture*>(depthStencil);
 
-        // Get DSV handle
-        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = {};
-        // This would need to be properly set based on the texture
-        // For now, we'll use a placeholder
-        assert(false && "ClearDepthStencilView not fully implemented yet");
+        // Get DSV handle from the texture
+        D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = d3d12Texture->GetDSV();
 
         m_commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
     }
@@ -170,21 +175,19 @@ namespace Reality {
         // Get RTV handles
         for (uint32_t i = 0; i < numRenderTargets; i++) {
             D3D12Texture* d3d12Texture = static_cast<D3D12Texture*>(renderTargets[i]);
-            // This would need to be properly set based on the texture
-            // For now, we'll use a placeholder
-            assert(false && "OMSetRenderTargets not fully implemented yet");
+            rtvHandles[i] = d3d12Texture->GetRTV();
         }
 
         // Get DSV handle
         if (depthStencil) {
             D3D12Texture* d3d12Texture = static_cast<D3D12Texture*>(depthStencil);
-            // This would need to be properly set based on the texture
-            assert(false && "OMSetRenderTargets not fully implemented yet");
+            dsvHandle = d3d12Texture->GetDSV();
         }
 
         m_commandList->OMSetRenderTargets(numRenderTargets, rtvHandles.data(), FALSE, depthStencil ? &dsvHandle : nullptr);
     }
 
+    
     void D3D12CommandList::RSSetViewports(uint32_t numViewports, const Viewport* viewports) {
         assert(!m_isClosed && "Command list is closed");
 
@@ -223,14 +226,14 @@ namespace Reality {
         // Reset command allocator
         HRESULT hr = m_commandAllocator->Reset();
         if (FAILED(hr)) {
-            assert(false && "Failed to reset command allocator");
+            std::cerr << "Failed to reset command allocator: " << hr << std::endl;
             return;
         }
 
         // Reset command list
         hr = m_commandList->Reset(m_commandAllocator.Get(), nullptr);
         if (FAILED(hr)) {
-            assert(false && "Failed to reset command list");
+            std::cerr << "Failed to reset command list: " << hr << std::endl;
             return;
         }
 

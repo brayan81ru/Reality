@@ -99,6 +99,7 @@ namespace Reality {
         virtual void SetIndexBuffer(IBuffer* buffer) = 0;
         virtual void SetGraphicsRootConstantBufferView(uint32_t rootIndex, IBuffer* buffer) = 0;
         virtual void SetGraphicsRootDescriptorTable(uint32_t rootIndex, IBuffer* buffer) = 0;
+        virtual void Draw(uint32_t vertexCount, uint32_t instanceCount = 1) = 0;
         virtual void DrawIndexed(uint32_t indexCount, uint32_t instanceCount = 1) = 0;
         virtual void CopyTextureRegion(ITexture* dst, ITexture* src) = 0;
         virtual void ClearRenderTargetView(ITexture* renderTarget, const float color[4]) = 0;
