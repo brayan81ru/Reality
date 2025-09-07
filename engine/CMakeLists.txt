@@ -20,6 +20,22 @@ add_library(Engine STATIC
         Source/Rendering/Texture.cpp
         Source/Rendering/Material.cpp
         Source/Platform/RealityWindow.cpp
+
+        Source/RenderingBackend/GraphicsTypes.h
+        Source/RenderingBackend/GraphicsDevice.h
+        Source/RenderingBackend/Resource.h
+        Source/RenderingBackend/CommandList.cpp
+        Source/RenderingBackend/GraphicsFactory.cpp
+
+        Source/RenderingBackend/D3D12Buffer.cpp
+        Source/RenderingBackend/D3D12Texture.cpp
+        Source/RenderingBackend/D3D12Shader.cpp
+        Source/RenderingBackend/D3D12PipelineState.cpp
+        Source/RenderingBackend/D3D12CommandList.cpp
+        Source/RenderingBackend/D3D12Fence.cpp
+        Source/RenderingBackend/D3D12Device.cpp
+
+
 )
 
 target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source)
@@ -30,6 +46,9 @@ target_include_directories(Engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/
 
 # 4. Diligent Engine libraries.
 target_link_libraries(Engine PUBLIC
+        d3d12
+        dxgi
+        d3dcompiler
         Diligent-Common
         Diligent-Imgui
         Diligent-ShaderTools
@@ -38,5 +57,4 @@ target_link_libraries(Engine PUBLIC
         Diligent-GraphicsEngineD3D12-static
         Diligent-GraphicsEngineD3D11-static
         Diligent-GraphicsEngineOpenGL-static
-        Diligent-GraphicsEngineVk-static
 )
