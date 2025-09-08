@@ -1,4 +1,4 @@
-﻿#include "RealityWindow.h"
+﻿#include "Window.h"
 #include <iostream>
 
 #ifdef _WIN32
@@ -12,16 +12,16 @@
 #endif
 
 namespace Reality {
-    RealityWindow::RealityWindow(const std::string& title, int width, int height)
+    Window::Window(const std::string& title, int width, int height)
         : m_title(title), m_width(width), m_height(height) {
         Initialize();
     }
 
-    RealityWindow::~RealityWindow() {
+    Window::~Window() {
         Shutdown();
     }
 
-    void RealityWindow::Show() {
+    void Window::Show() {
 #ifdef _WIN32
         ShowWindow(m_hwnd, SW_SHOW);
         UpdateWindow(m_hwnd);
@@ -34,7 +34,7 @@ namespace Reality {
 #endif
     }
 
-    void RealityWindow::ProcessMessages() {
+    void Window::ProcessMessages() {
 #ifdef _WIN32
         MSG msg = {};
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
@@ -68,15 +68,15 @@ namespace Reality {
 #endif
     }
 
-    bool RealityWindow::ShouldClose() const {
+    bool Window::ShouldClose() const {
         return m_shouldClose;
     }
 
-    void RealityWindow::SetEventCallback(EventCallback callback) {
+    void Window::SetEventCallback(EventCallback callback) {
         m_eventCallback = callback;
     }
 
-    void RealityWindow::Initialize() {
+    void Window::Initialize() {
 #ifdef _WIN32
         // Register window class
         WNDCLASS wc = {};
@@ -110,7 +110,7 @@ namespace Reality {
 #endif
     }
 
-    void RealityWindow::Shutdown() {
+    void Window::Shutdown() {
 #ifdef _WIN32
         if (m_hwnd) {
             DestroyWindow(m_hwnd);
@@ -139,15 +139,15 @@ namespace Reality {
 
     // Windows-specific implementation
 #ifdef _WIN32
-    LRESULT CALLBACK RealityWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-        RealityWindow* window = nullptr;
+    LRESULT CALLBACK Window::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+        Window* window = nullptr;
 
         if (uMsg == WM_NCCREATE) {
             CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-            window = reinterpret_cast<RealityWindow*>(pCreate->lpCreateParams);
+            window = reinterpret_cast<Window*>(pCreate->lpCreateParams);
             SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
         } else {
-            window = reinterpret_cast<RealityWindow*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+            window = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
         }
 
         if (window) {

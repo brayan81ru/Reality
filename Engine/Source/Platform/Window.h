@@ -11,12 +11,12 @@
 #include <X11/Xlib.h>
 #endif
 namespace Reality {
-    class RealityWindow {
+    class Window {
     public:
         using EventCallback = std::function<void(int, int)>;
 
-        RealityWindow(const std::string& title, int width, int height);
-        ~RealityWindow();
+        Window(const std::string& title, int width, int height);
+        ~Window();
 
         // Platform-independent methods
         void Show();
