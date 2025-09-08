@@ -10,6 +10,7 @@
 #elif defined(__linux__)
 #include <X11/Xlib.h>
 #endif
+
 namespace Reality {
     class Window {
     public:

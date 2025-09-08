@@ -7,7 +7,6 @@
 #include <string>
 
 namespace Reality {
-
     class DX12Renderer {
     public:
         DX12Renderer(HWND hwnd, int width, int height);
@@ -58,5 +57,4 @@ namespace Reality {
 
         UINT m_frameIndex;
     };
-
 } // namespace Reality
