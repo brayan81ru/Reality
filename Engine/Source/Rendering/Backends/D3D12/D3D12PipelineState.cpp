@@ -77,19 +77,31 @@ namespace Reality {
         Microsoft::WRL::ComPtr<ID3DBlob> pixelShader;
         Microsoft::WRL::ComPtr<ID3DBlob> computeShader;
 
+        // Create temporary shader objects to get the compiled blobs
+        ShaderPtr vsShader, psShader, csShader;
+
         if (m_desc.vertexShader.source.length() > 0) {
-            auto vs = static_cast<D3D12Shader*>(const_cast<IShader*>(&m_desc.vertexShader));
-            vertexShader = vs->GetShaderBlob();
+            vsShader = ShaderPtr(m_device->CreateShader(m_desc.vertexShader));
+            if (vsShader) {
+                auto d3dVs = static_cast<D3D12Shader*>(vsShader.get());
+                vertexShader = d3dVs->GetShaderBlob();
+            }
         }
 
         if (m_desc.pixelShader.source.length() > 0) {
-            auto ps = static_cast<D3D12Shader*>(const_cast<IShader*>(&m_desc.pixelShader));
-            pixelShader = ps->GetShaderBlob();
+            psShader = ShaderPtr(m_device->CreateShader(m_desc.pixelShader));
+            if (psShader) {
+                auto d3dPs = static_cast<D3D12Shader*>(psShader.get());
+                pixelShader = d3dPs->GetShaderBlob();
+            }
         }
 
         if (m_desc.computeShader.source.length() > 0) {
-            auto cs = static_cast<D3D12Shader*>(const_cast<IShader*>(&m_desc.computeShader));
-            computeShader = cs->GetShaderBlob();
+            csShader = ShaderPtr(m_device->CreateShader(m_desc.computeShader));
+            if (csShader) {
+                auto d3dCs = static_cast<D3D12Shader*>(csShader.get());
+                computeShader = d3dCs->GetShaderBlob();
+            }
         }
 
         // Determine if this is a graphics or compute pipeline

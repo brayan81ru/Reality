@@ -86,17 +86,28 @@ namespace Reality {
             return;
         }
 
-        // Get RTV heap
-        ID3D12DescriptorHeap* rtvHeap = m_device->GetD3DDevice()->GetDescriptorHandleForHeapStart();
-        if (!rtvHeap) {
+        // Create RTV descriptor heap
+        D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+        rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+        rtvHeapDesc.NumDescriptors = m_bufferCount;
+        rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+        rtvHeapDesc.NodeMask = 0;
+
+        Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvHeap;
+        HRESULT hr = m_device->GetD3DDevice()->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&rtvHeap));
+        if (FAILED(hr)) {
             return;
         }
 
+        // Store the heap for later use
+        m_rtvHeap = rtvHeap;
+
+        // Get the RTV handle
         D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = rtvHeap->GetCPUDescriptorHandleForHeapStart();
 
         for (UINT i = 0; i < m_bufferCount; i++) {
             // Get back buffer
-            HRESULT hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_backBuffers[i]));
+            hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_backBuffers[i]));
             assert(SUCCEEDED(hr));
 
             // Create RTV

@@ -35,6 +35,7 @@ namespace Reality {
 
         D3D12Device* m_device;
         Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapChain;
+        Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> m_rtvHeap;
 
         // Back buffers
         static const uint32_t MaxBackBuffers = 8;
